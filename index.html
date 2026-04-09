@@ -131,12 +131,12 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
   </div>
 
   <div class="field-row">
-    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
-    <div class="field"><label>Business name</label><input type="text" id="p-biz" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Phone number" /></div>
+    <div class="field"><label>Business name</label><input type="text" id="p-biz" placeholder="Business name" /></div>
   </div>
   <div class="field-row">
-    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
-    <div class="field"><label>National ID</label><input type="text" id="p-nid" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Email" /></div>
+    <div class="field"><label>National ID</label><input type="text" id="p-nid" placeholder="National ID" /></div>
   </div>
 
   <div class="nav-row"><button class="btn-next" onclick="go(2)">Continue</button></div>
@@ -319,7 +319,10 @@ async function loadParticipants(){const loading=document.getElementById('par-loa
 
 function searchParticipants(q){const dd=document.getElementById('par-dropdown');if(!q||q.length<2){dd.style.display='none';return;}const matches=allParticipants.filter(p=>(p.participant_name||p.name||'').toLowerCase().includes(q.toLowerCase())||(p.business_name||'').toLowerCase().includes(q.toLowerCase())).slice(0,8);if(matches.length===0){dd.style.display='none';return;}dd.innerHTML=matches.map((p,i)=>`<div onclick="selectParticipant(${i},'${q}')" style="padding:10px 12px;cursor:pointer;border-bottom:0.5px solid #eee;font-size:13px" onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''">`+`<div style="font-weight:500">${p.participant_name||p.name||'—'}</div>`+`<div style="font-size:11px;color:#666;margin-top:2px">${p.business_name||'No business'} · ${p.phone_number||p.phone||'—'}</div></div>`).join('');dd.style.display='block';window._pmatches=matches;}
 
-function selectParticipant(idx,q){const p=window._pmatches[idx];document.getElementById('p-name').value=p.participant_name||p.name||q;document.getElementById('p-phone').value=p.phone_number||p.phone||'';document.getElementById('p-biz').value=p.business_name||'';document.getElementById('p-email').value=p.email||'';document.getElementById('p-nid').value=p.has_national_id||p.national_id||'';document.getElementById('par-dropdown').style.display='none';if(p.participant_id){parId=p.participant_id;}else{parId=genId('PAR');}eviId=genId('EVI');intId=genId('INT');document.getElementById('par-id').textContent=parId;document.getElementById('evi-id').textContent=eviId;document.getElementById('int-id').textContent=intId;addAudit('Participant selected',p.participant_name||'',parId);}
+// Auto-fill removed: selectParticipant is now a no-op or can be removed entirely
+function selectParticipant(idx,q){
+  document.getElementById('par-dropdown').style.display='none';
+}
 
 document.addEventListener('click',function(e){const dd=document.getElementById('par-dropdown');if(dd&&!dd.contains(e.target)&&e.target.id!=='p-name')dd.style.display='none';});
 
