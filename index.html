@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DCC Evidence Collection Tool v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f3;padding:1rem}
+.wrap{max-width:600px;margin:0 auto;background:white;border-radius:12px;padding:1.25rem;border:0.5px solid #ddd}
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f5f3;border-radius:8px;margin-bottom:1rem;font-size:12px}
+.status-left{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-online{background:#1D9E75}
+.dot-offline{background:#E24B4A}
+.sync-badge{background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+.sync-badge.none{background:#E1F5EE;color:#085041}
+.ids-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
+.id-card{background:white;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px}
+.id-label{font-size:11px;color:#666;margin-bottom:4px}
+.id-val{font-size:11px;font-weight:500;font-family:monospace;color:#1a1a1a;word-break:break-all}
+.progress-bar{height:3px;background:#f0f0f0;border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.progress-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width 0.3s}
+.step-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.step-label{font-size:12px;color:#666}
+.audit-btn{font-size:11px;padding:4px 10px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666}
+.section{display:none}
+.section.active{display:block}
+.step-title{font-size:17px;font-weight:500;margin-bottom:1.25rem;color:#1a1a1a}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:12px;color:#666;margin-bottom:5px}
+.field label span{color:#E24B4A;margin-left:2px}
+.field input,.field select,.field textarea{width:100%;font-family:system-ui,sans-serif;font-size:14px;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;outline:none;background:white;color:#1a1a1a}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,0.1)}
+.field textarea{min-height:72px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.outcome-btn{padding:9px 10px;border:0.5px solid #ddd;border-radius:8px;background:white;cursor:pointer;font-size:13px;color:#1a1a1a;text-align:left;transition:all 0.15s}
+.outcome-btn.sel{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.upload-zone{border:1px dashed #ccc;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background 0.15s}
+.upload-zone:hover{background:#f9f9f9}
+.upload-zone input{display:none}
+.file-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.file-item{border:0.5px solid #ddd;border-radius:8px;padding:8px 10px;font-size:12px}
+.file-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.compress-bar-wrap{height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden}
+.compress-bar{height:100%;background:#1D9E75;border-radius:2px;transition:width 0.4s}
+.file-sizes{font-size:11px;color:#666;margin-top:3px}
+.saving-tag{background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:500}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.nav-row button{flex:1;padding:10px;border-radius:8px;font-size:14px;cursor:pointer;border:0.5px solid #ccc;background:white;color:#1a1a1a;transition:all 0.15s}
+.btn-next{background:#085041;border-color:#085041;color:white}
+.btn-next:hover{background:#0F6E56}
+.btn-back{color:#666}
+.audit-panel-box{background:#f5f5f3;border-radius:8px;padding:1rem;margin-bottom:1rem}
+.audit-title{font-size:12px;font-weight:500;color:#666;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
+.audit-row{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid #e0e0e0;font-size:11px;align-items:flex-start}
+.audit-row:last-child{border-bottom:none}
+.audit-time{color:#999;flex-shrink:0;font-family:monospace;min-width:52px}
+.audit-action{color:#666}
+.audit-val{color:#1a1a1a;font-weight:500;word-break:break-word;margin-left:auto}
+.submit-btn{width:100%;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;margin-top:0.5rem}
+.submit-btn:hover{background:#0F6E56}
+.success-wrap{padding:1.5rem 0;text-align:center}
+.id-big{font-family:monospace;font-size:13px;font-weight:500;background:#f5f5f3;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;text-align:left}
+.copy-btn{font-size:11px;padding:3px 8px;border:0.5px solid #ccc;border-radius:6px;background:white;cursor:pointer;color:#666;flex-shrink:0;margin-left:8px}
+.offline-banner{display:none;background:#FAEEDA;color:#633806;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:1rem;border:0.5px solid #EF9F27}
+.radio-group{display:flex;flex-direction:column;gap:6px}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:0.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a1a;transition:all 0.15s}
+.radio-opt.sel{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.rdot{width:14px;height:14px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.rdot.on::after{content:'';width:7px;height:7px;border-radius:50%;background:#1D9E75}
+.section-divider{border:none;border-top:0.5px solid #e0e0e0;margin:1.25rem 0}
+.meta-card{background:#f5f5f3;border-radius:8px;padding:12px 14px;margin-bottom:1rem}
+.meta-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:0.5px solid #e0e0e0}
+.meta-row:last-child{border-bottom:none}
+.review-card{background:white;border:0.5px solid #ddd;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+@media(max-width:480px){.ids-panel{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="offline-banner" id="offline-banner">You are offline. Records will be saved locally and synced when you reconnect.</div>
+
+<div class="status-bar">
+  <div class="status-left">
+    <div class="dot dot-online" id="net-dot"></div>
+    <span id="net-label" style="color:#666">Online</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:11px;color:#666">Queue:</span>
+    <span class="sync-badge none" id="queue-badge">0 pending</span>
+  </div>
+</div>
+
+<div class="ids-panel">
+  <div class="id-card"><div class="id-label">Participant ID</div><div class="id-val" id="par-id">—</div></div>
+  <div class="id-card"><div class="id-label">Evidence ID</div><div class="id-val" id="evi-id">—</div></div>
+  <div class="id-card"><div class="id-label">Intervention ID</div><div class="id-val" id="int-id">—</div></div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="pbar" style="width:10%"></div></div>
+<div class="step-row">
+  <span class="step-label" id="step-lbl">Step 1 of 10</span>
+  <button class="audit-btn" onclick="toggleAudit()">Audit trail</button>
+</div>
+
+<div id="audit-panel" style="display:none">
+  <div class="audit-panel-box">
+    <div class="audit-title">Audit trail</div>
+    <div id="audit-log"><div style="font-size:12px;color:#999">No actions yet</div></div>
+  </div>
+</div>
+
+<!-- Step 1 -->
+<div class="section active" id="s1">
+  <div class="step-title">Participant details</div>
+
+  <div class="field">
+    <label>DCC agent name <span>*</span></label>
+    <input type="text" id="p-dcc" placeholder="Your full name e.g. James Mugisha" oninput="onField('p-dcc','DCC agent set','p-dcc')" onblur="lookupDCC(this.value)" />
+    <div id="dcc-status" style="font-size:11px;margin-top:4px;display:none"></div>
+  </div>
+
+  <div class="field" style="position:relative">
+    <label>Participant name <span>*</span></label>
+    <input type="text" id="p-name" placeholder="Type to search participants..." oninput="searchParticipants(this.value)" autocomplete="off" />
+    <div id="par-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ccc;border-radius:8px;z-index:10;max-height:200px;overflow-y:auto;margin-top:2px;box-shadow:0 4px 12px rgba(0,0,0,0.08)"></div>
+    <div id="par-loading" style="display:none;font-size:11px;color:#666;margin-top:4px">Loading participants...</div>
+  </div>
+
+  <div class="field-row">
+    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+    <div class="field"><label>Business name</label><input type="text" id="p-biz" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+    <div class="field"><label>National ID</label><input type="text" id="p-nid" placeholder="Auto-filled" readonly style="background:#f9f9f9" /></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="go(2)">Continue</button></div>
+</div>
+
+<!-- Step 2 -->
+<div class="section" id="s2">
+  <div class="step-title">Outcomes reported</div>
+  <div class="outcome-grid">
+    <button class="outcome-btn" onclick="togOut(this,'Got a job')">Got a job</button>
+    <button class="outcome-btn" onclick="togOut(this,'Started a business')">Started a business</button>
+    <button class="outcome-btn" onclick="togOut(this,'Made a sale')">Made a sale</button>
+    <button class="outcome-btn" onclick="togOut(this,'Increased income')">Increased income</button>
+    <button class="outcome-btn" onclick="togOut(this,'Accessed digital credit')">Accessed digital credit</button>
+    <button class="outcome-btn" onclick="togOut(this,'Adopted digital tools')">Adopted digital tools</button>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(1)">Back</button><button class="btn-next" onclick="go(3)">Continue</button></div>
+</div>
+
+<!-- Step 3 -->
+<div class="section" id="s3">
+  <div class="step-title">Outcome details</div>
+  <div class="field"><label>Date outcome occurred <span>*</span></label><input type="date" id="out-date" onchange="onField('out-date','Outcome date set','out-date')" /></div>
+  <div class="field"><label>Description <span>*</span></label><textarea id="out-desc" placeholder="e.g. First sale via WhatsApp, Received UGX 200,000 loan..." onblur="onField('out-desc','Description saved','out-desc')"></textarea></div>
+  <div class="field-row">
+    <div class="field"><label>Income before (UGX)</label><input type="number" id="inc-before" placeholder="0" onblur="onField('inc-before','Income before set','inc-before')" /></div>
+    <div class="field"><label>Income after (UGX)</label><input type="number" id="inc-after" placeholder="0" onblur="onField('inc-after','Income after set','inc-after')" /></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(2)">Back</button><button class="btn-next" onclick="go(4)">Continue</button></div>
+</div>
+
+<!-- Step 4 -->
+<div class="section" id="s4">
+  <div class="step-title">Evidence upload</div>
+  <p style="font-size:12px;color:#E24B4A;font-weight:500;margin-bottom:0.75rem">Required — images are auto-compressed before upload</p>
+  <div class="upload-zone" onclick="document.getElementById('ev-input').click()">
+    <div style="font-size:13px;font-weight:500;margin-bottom:4px">Tap to add evidence</div>
+    <div style="font-size:12px;color:#666">Photos, screenshots, PDFs, audio</div>
+    <input type="file" id="ev-input" multiple accept="image/*,application/pdf,audio/*" onchange="handleFiles(this)" />
+  </div>
+  <div class="file-list" id="file-list"></div>
+  <div class="field"><label>Evidence type</label><select id="ev-type" onchange="onField('ev-type','Evidence type set','ev-type')"><option value="">Select...</option><option>Screenshot</option><option>Photo</option><option>Document</option><option>Audio testimony</option></select></div>
+  <div class="field"><label>What does this evidence prove? <span>*</span></label><textarea id="ev-desc" placeholder="e.g. Screenshot of payment confirmation from mobile money..." onblur="onField('ev-desc','Evidence description saved','ev-desc')"></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="go(3)">Back</button><button class="btn-next" onclick="go(5)">Continue</button></div>
+</div>
+
+<!-- Step 5 -->
+<div class="section" id="s5">
+  <div class="step-title">Auto-captured metadata</div>
+  <p style="font-size:12px;color:#666;margin-bottom:1rem">System-generated — cannot be edited by DCC</p>
+  <div class="meta-card">
+    <div class="meta-row"><span style="color:#666">Timestamp</span><span id="m-ts" style="font-weight:500;font-family:monospace;font-size:12px">—</span></div>
+    <div class="meta-row"><span style="color:#666">Device</span><span id="m-dev" style="font-weight:500;font-size:12px">—</span></div>
+    <div class="meta-row"><span style="color:#666">GPS</span><span id="m-gps" style="font-weight:500;font-size:12px;color:#999">Not captured</span></div>
+    <div class="meta-row"><span style="color:#666">Network at submit</span><span id="m-net" style="font-weight:500;font-size:12px">—</span></div>
+  </div>
+  <button style="font-size:12px;padding:6px 14px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666" id="gps-btn" onclick="captureGPS()">Capture GPS</button>
+  <div class="nav-row"><button class="btn-back" onclick="go(4)">Back</button><button class="btn-next" onclick="go(6)">Continue</button></div>
+</div>
+
+<!-- Step 6 -->
+<div class="section" id="s6">
+  <div class="step-title">Source of evidence</div>
+  <div class="radio-group" id="src-group">
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Self-reported by participant')"><div class="rdot"></div>Self-reported by participant</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Platform-generated')"><div class="rdot"></div>Platform-generated (WhatsApp, Jumia, etc.)</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Financial institution')"><div class="rdot"></div>Financial institution (SACCO / bank)</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Third-party verified')"><div class="rdot"></div>Third-party verified</div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(5)">Back</button><button class="btn-next" onclick="go(7)">Continue</button></div>
+</div>
+
+<!-- Step 7 -->
+<div class="section" id="s7">
+  <div class="step-title">DCC observation</div>
+  <div class="field"><label>Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..." onblur="onField('dcc-comment','DCC comment saved','dcc-comment')"></textarea></div>
+  <div class="field">
+    <label>Confidence level</label>
+    <div class="radio-group" id="conf-group">
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'High')"><div class="rdot"></div>High — strong, verifiable evidence</div>
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'Medium')"><div class="rdot"></div>Medium — plausible, some gaps</div>
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'Low')"><div class="rdot"></div>Low — self-reported only</div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(6)">Back</button><button class="btn-next" onclick="go(8)">Continue</button></div>
+</div>
+
+<!-- Step 8 -->
+<div class="section" id="s8">
+  <div class="step-title">Verification</div>
+  <div class="field">
+    <label>Verification status</label>
+    <div class="radio-group" id="verif-group">
+      <div class="radio-opt sel" onclick="selRadio('verif-group',this,'Pending')"><div class="rdot on"></div>Pending review</div>
+      <div class="radio-opt" onclick="selRadio('verif-group',this,'Approved')"><div class="rdot"></div>Approved</div>
+      <div class="radio-opt" onclick="selRadio('verif-group',this,'Rejected')"><div class="rdot"></div>Rejected</div>
+    </div>
+  </div>
+  <div class="field"><label>Verification method</label><select id="verif-method" onchange="onField('verif-method','Verification method set','verif-method')"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select></div>
+  <div class="field-row">
+    <div class="field"><label>Verified by</label><input type="text" id="verif-name" placeholder="Name" onblur="onField('verif-name','Verifier set','verif-name')" /></div>
+    <div class="field"><label>Organization</label><input type="text" id="verif-org" placeholder="Org" onblur="onField('verif-org','Verifier org set','verif-org')" /></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(7)">Back</button><button class="btn-next" onclick="go(9)">Continue</button></div>
+</div>
+
+<!-- Step 9 -->
+<div class="section" id="s9">
+  <div class="step-title">Follow-up</div>
+  <div class="field">
+    <label>Flag for follow-up?</label>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="outcome-btn" id="fu-yes" onclick="setFU(true)">Yes</button>
+      <button class="outcome-btn" id="fu-no" onclick="setFU(false)">No</button>
+    </div>
+  </div>
+  <div id="fu-date-row" style="display:none" class="field"><label>Follow-up date</label><input type="date" id="fu-date" onchange="onField('fu-date','Follow-up date set','fu-date')" /></div>
+  <div class="nav-row"><button class="btn-back" onclick="go(8)">Back</button><button class="btn-next" onclick="go(10)">Review &amp; submit</button></div>
+</div>
+
+<!-- Step 10 -->
+<div class="section" id="s10">
+  <div class="step-title">Review &amp; submit</div>
+  <div id="review-cards"></div>
+  <hr class="section-divider" />
+  <div class="audit-panel-box">
+    <div class="audit-title">Audit trail — this session</div>
+    <div id="audit-log-final"></div>
+  </div>
+  <button class="submit-btn" onclick="submitForm()">Submit evidence record</button>
+  <div class="nav-row" style="margin-top:8px"><button class="btn-back" onclick="go(9)">Back</button></div>
+</div>
+
+<!-- Success -->
+<div class="section" id="s11">
+  <div class="success-wrap">
+    <div style="width:48px;height:48px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:20px;color:#085041">&#10003;</div>
+    <div style="font-size:17px;font-weight:500;margin-bottom:6px">Record submitted</div>
+    <div style="font-size:13px;color:#666;margin-bottom:1.5rem" id="submit-note">Saved and queued for back-office verification</div>
+    <div style="margin-bottom:1rem;text-align:left">
+      <div style="font-size:12px;color:#666;margin-bottom:8px">Reference IDs — copy and keep safe</div>
+      <div class="id-big"><span id="final-par"></span><button class="copy-btn" onclick="copyId('final-par',this)">Copy</button></div>
+      <div class="id-big"><span id="final-evi"></span><button class="copy-btn" onclick="copyId('final-evi',this)">Copy</button></div>
+      <div class="id-big"><span id="final-int"></span><button class="copy-btn" onclick="copyId('final-int',this)">Copy</button></div>
+    </div>
+    <button class="submit-btn" onclick="resetAll()">Submit another record</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const API_KEY='AIzaSyB1-kXAJsy_C1JKhZ22R0tYeuZhGq6eCOr0';
+const SHEET_AGENTS='1cAN6vzJGI7l0Ey3UnTCI9qZvXBo8Z3qnN9xPh3rhSlo';
+const SHEET_PARTICIPANTS='1x4-wPAHIli3QqL_K2Xc-ur3E2-ICtm7ynuc8uByoEOc';
+const SHEET_EVIDENCE='1dCwqRpY2qGxKVuR-3bO5HePFMWEpV74ywBdujHc0Ieg';
+
+let step=1,TOTAL=10,outcomes=[],auditLog=[],uploadedFiles=[],gps=null,isOnline=navigator.onLine,queueCount=0;
+let parId='',eviId='',intId='',srcVal='',confVal='',verifVal='Pending',followUp=null;
+let dccUUID='',allParticipants=[],participantsLoaded=false;
+
+function genId(prefix){const d=new Date();const ds=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');const r=Math.random().toString(36).substr(2,4).toUpperCase();return prefix+'-'+ds+'-'+r;}
+
+function generateIds(){const name=document.getElementById('p-name').value;if(name.length>1&&!parId){parId=genId('PAR');eviId=genId('EVI');intId=genId('INT');document.getElementById('par-id').textContent=parId;document.getElementById('evi-id').textContent=eviId;document.getElementById('int-id').textContent=intId;addAudit('IDs generated','PAR/EVI/INT',parId+' | '+eviId+' | '+intId);}}
+
+async function fetchSheetRows(sheetId){const url=`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${API_KEY}`;const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();const rows=data.values||[];if(rows.length<2)return[];const headers=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));return rows.slice(1).map(row=>{const obj={};headers.forEach((h,i)=>obj[h]=row[i]||'');return obj;});}
+
+async function appendRow(sheetId,values){const url=`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1:append?valueInputOption=RAW&key=${API_KEY}`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:[values]})});if(!res.ok)throw new Error('Append HTTP '+res.status);return res.json();}
+
+async function lookupDCC(name){if(!name||name.length<3)return;const status=document.getElementById('dcc-status');status.style.display='block';status.style.color='#666';status.textContent='Looking up agent...';try{const agents=await fetchSheetRows(SHEET_AGENTS);const match=agents.find(a=>(a.dcc_name||'').toLowerCase()===name.toLowerCase()||(a.name||'').toLowerCase()===name.toLowerCase());if(match){dccUUID=match.dcc_uuid||match.uuid||genId('DCC');status.style.color='#1D9E75';status.textContent='Agent verified — UUID: '+dccUUID;addAudit('DCC verified',name,dccUUID);if(!participantsLoaded)await loadParticipants();}else{dccUUID=genId('DCC');status.style.color='#E24B4A';status.textContent='Agent not found in roster — new UUID assigned: '+dccUUID;addAudit('DCC not in roster',name,dccUUID);if(!participantsLoaded)await loadParticipants();}}catch(e){dccUUID=genId('DCC');status.style.color='#EF9F27';status.textContent='Sheet offline — UUID assigned: '+dccUUID;addAudit('DCC lookup offline',name,dccUUID);}}
+
+async function loadParticipants(){const loading=document.getElementById('par-loading');loading.style.display='block';try{const all=await fetchSheetRows(SHEET_PARTICIPANTS);allParticipants=dccUUID?all.filter(p=>{const puuid=(p.dcc_uuid||p.dcc_agent_uuid||'').trim();return puuid===dccUUID||puuid==='';}).concat(dccUUID?[]:[]):all;if(allParticipants.length===0)allParticipants=all;participantsLoaded=true;addAudit('Participants loaded',allParticipants.length+' records','');}catch(e){addAudit('Participants offline','will use manual entry','');}finally{loading.style.display='none';}}
+
+function searchParticipants(q){const dd=document.getElementById('par-dropdown');if(!q||q.length<2){dd.style.display='none';return;}const matches=allParticipants.filter(p=>(p.participant_name||p.name||'').toLowerCase().includes(q.toLowerCase())||(p.business_name||'').toLowerCase().includes(q.toLowerCase())).slice(0,8);if(matches.length===0){dd.style.display='none';return;}dd.innerHTML=matches.map((p,i)=>`<div onclick="selectParticipant(${i},'${q}')" style="padding:10px 12px;cursor:pointer;border-bottom:0.5px solid #eee;font-size:13px" onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''">`+`<div style="font-weight:500">${p.participant_name||p.name||'—'}</div>`+`<div style="font-size:11px;color:#666;margin-top:2px">${p.business_name||'No business'} · ${p.phone_number||p.phone||'—'}</div></div>`).join('');dd.style.display='block';window._pmatches=matches;}
+
+function selectParticipant(idx,q){const p=window._pmatches[idx];document.getElementById('p-name').value=p.participant_name||p.name||q;document.getElementById('p-phone').value=p.phone_number||p.phone||'';document.getElementById('p-biz').value=p.business_name||'';document.getElementById('p-email').value=p.email||'';document.getElementById('p-nid').value=p.has_national_id||p.national_id||'';document.getElementById('par-dropdown').style.display='none';if(p.participant_id){parId=p.participant_id;}else{parId=genId('PAR');}eviId=genId('EVI');intId=genId('INT');document.getElementById('par-id').textContent=parId;document.getElementById('evi-id').textContent=eviId;document.getElementById('int-id').textContent=intId;addAudit('Participant selected',p.participant_name||'',parId);}
+
+document.addEventListener('click',function(e){const dd=document.getElementById('par-dropdown');if(dd&&!dd.contains(e.target)&&e.target.id!=='p-name')dd.style.display='none';});
+
+function addAudit(action,field,val){const now=new Date();const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');const dcc=document.getElementById('p-dcc').value||'DCC agent';auditLog.push({ts,dcc,action,field,val:String(val).slice(0,60)});renderAudit();}
+
+function renderAudit(){const html=auditLog.slice(-8).reverse().map(e=>'<div class="audit-row"><span class="audit-time">'+e.ts+'</span><span class="audit-action">'+e.dcc+' — '+e.action+'</span><span class="audit-val">'+e.val+'</span></div>').join('');document.getElementById('audit-log').innerHTML=auditLog.length?html:'<div style="font-size:12px;color:#999">No actions yet</div>';}
+
+function onField(id,action,field){const el=document.getElementById(id);if(el&&el.value)addAudit(action,field,el.value);}
+
+function go(n){document.getElementById('s'+step).classList.remove('active');step=n;document.getElementById('s'+n).classList.add('active');document.getElementById('pbar').style.width=Math.round((n/TOTAL)*100)+'%';document.getElementById('step-lbl').textContent='Step '+n+' of '+TOTAL;if(n===5)fillMeta();if(n===10)buildReview();addAudit('Navigated to step','step',n);window.scrollTo(0,0);}
+
+function togOut(btn,val){btn.classList.toggle('sel');const i=outcomes.indexOf(val);if(i===-1){outcomes.push(val);addAudit('Outcome selected','outcome',val);}else{outcomes.splice(i,1);addAudit('Outcome removed','outcome',val);}}
+
+async function handleFiles(inp){const fl=document.getElementById('file-list');for(const file of Array.from(inp.files)){const isImg=file.type.startsWith('image/');const origKB=Math.round(file.size/1024);const uid='f'+Date.now()+Math.random().toString(36).substr(2,4);const div=document.createElement('div');div.className='file-item';div.innerHTML='<div class="file-meta"><span style="font-weight:500">'+file.name+'</span><span class="saving-tag" id="tag-'+uid+'">'+(isImg?'Compressing...':'No compression needed')+'</span></div>'+(isImg?'<div class="compress-bar-wrap"><div class="compress-bar" id="bar-'+uid+'" style="width:100%"></div></div><div class="file-sizes" id="sz-'+uid+'">'+origKB+' KB original...</div>':'<div style="font-size:11px;color:#666;margin-top:3px">'+origKB+' KB</div>');fl.appendChild(div);if(isImg){try{const compressed=await compressImage(file);const compKB=Math.round(compressed.size/1024);const saving=Math.round((1-compressed.size/file.size)*100);const pct=Math.round((compKB/origKB)*100);const barEl=document.getElementById('bar-'+uid);const szEl=document.getElementById('sz-'+uid);const tagEl=document.getElementById('tag-'+uid);if(barEl)barEl.style.width=pct+'%';if(szEl)szEl.textContent=origKB+' KB → '+compKB+' KB ('+saving+'% saved)';if(tagEl)tagEl.textContent=saving+'% saved';uploadedFiles.push({name:file.name,origKB,compKB,saving});addAudit('File compressed',file.name,origKB+'KB → '+compKB+'KB');}catch(e){uploadedFiles.push({name:file.name,origKB,compKB:origKB,saving:0});addAudit('File uploaded',file.name,origKB+'KB');}}else{uploadedFiles.push({name:file.name,origKB,compKB:origKB,saving:0});addAudit('File uploaded',file.name,origKB+'KB');}}}
+
+function compressImage(file,maxW=900,quality=0.72){return new Promise((resolve,reject)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const scale=Math.min(maxW/img.width,1);const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);canvas.toBlob(blob=>{URL.revokeObjectURL(url);if(blob)resolve(blob);else reject();},'image/jpeg',quality);};img.onerror=reject;img.src=url;});}
+
+function fillMeta(){document.getElementById('m-ts').textContent=new Date().toLocaleString('en-UG');document.getElementById('m-dev').textContent=/Mobi|Android/i.test(navigator.userAgent)?'Mobile':'Desktop';document.getElementById('m-net').textContent=isOnline?'Online':'Offline';addAudit('Auto-metadata captured','system','timestamp + device + network');}
+
+function captureGPS(){const btn=document.getElementById('gps-btn');btn.textContent='Capturing...';btn.disabled=true;navigator.geolocation?navigator.geolocation.getCurrentPosition(pos=>{gps=pos.coords.latitude.toFixed(5)+', '+pos.coords.longitude.toFixed(5);document.getElementById('m-gps').textContent=gps;document.getElementById('m-gps').style.color='#1a1a1a';btn.textContent='GPS captured';addAudit('GPS captured','location',gps);},()=>{btn.textContent='Retry GPS';btn.disabled=false;}):(btn.textContent='Not supported');}
+
+function selRadio(groupId,el,val){document.getElementById(groupId).querySelectorAll('.radio-opt').forEach(r=>{r.classList.remove('sel');r.querySelector('.rdot').classList.remove('on');});el.classList.add('sel');el.querySelector('.rdot').classList.add('on');if(groupId==='src-group')srcVal=val;if(groupId==='conf-group')confVal=val;if(groupId==='verif-group')verifVal=val;addAudit('Selection made',groupId,val);}
+
+function setFU(val){followUp=val;document.getElementById('fu-yes').classList.toggle('sel',val===true);document.getElementById('fu-no').classList.toggle('sel',val===false);document.getElementById('fu-date-row').style.display=val?'block':'none';addAudit('Follow-up flag','followup',val?'Yes':'No');}
+
+function toggleAudit(){const p=document.getElementById('audit-panel');p.style.display=p.style.display==='none'?'block':'none';}
+
+function buildReview(){const rows=[['Participant',document.getElementById('p-name').value||'—'],['DCC agent',document.getElementById('p-dcc').value||'—'],['Participant ID',parId||'—'],['Evidence ID',eviId||'—'],['Intervention ID',intId||'—'],['Outcomes',outcomes.join(', ')||'—'],['Outcome date',document.getElementById('out-date').value||'—'],['Files uploaded',uploadedFiles.length?uploadedFiles.map(f=>f.name+' ('+f.saving+'% saved)').join(', '):'None'],['Evidence source',srcVal||'—'],['Confidence',confVal||'—'],['Verification',verifVal||'—'],['Audit entries',auditLog.length+' actions logged']];document.getElementById('review-cards').innerHTML='<div class="review-card">'+rows.map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #e0e0e0;font-size:13px"><span style="color:#666">'+k+'</span><span style="font-weight:500;max-width:55%;text-align:right">'+v+'</span></div>').join('')+'</div>';document.getElementById('audit-log-final').innerHTML=auditLog.map(e=>'<div class="audit-row"><span class="audit-time">'+e.ts+'</span><span class="audit-action">'+e.action+'</span><span class="audit-val">'+e.val+'</span></div>').join('')||'<div style="font-size:12px;color:#999">No entries</div>';}
+
+function saveToIDB(record){try{const req=indexedDB.open('dcc-offline-queue',1);req.onupgradeneeded=e=>e.target.result.createObjectStore('queue',{keyPath:'id',autoIncrement:true});req.onsuccess=e=>{const db=e.target.result;db.transaction('queue','readwrite').objectStore('queue').add(record);};}catch(e){}}
+
+async function submitForm(){
+  const isOff=!isOnline;
+  const values=[
+    eviId,
+    parId,
+    intId,
+    dccUUID,
+    document.getElementById('p-dcc').value,
+    document.getElementById('p-name').value,
+    document.getElementById('p-phone').value,
+    document.getElementById('p-biz').value,
+    document.getElementById('p-email').value,
+    document.getElementById('p-nid').value,
+    outcomes.join(', '),
+    document.getElementById('out-date').value,
+    document.getElementById('out-desc').value,
+    document.getElementById('inc-before').value,
+    document.getElementById('inc-after').value,
+    uploadedFiles.length+' file(s) — '+uploadedFiles.map(f=>f.name).join(', '),
+    document.getElementById('ev-type').value,
+    document.getElementById('ev-desc').value,
+    srcVal,
+    confVal,
+    verifVal,
+    document.getElementById('verif-method').value,
+    document.getElementById('verif-name').value,
+    document.getElementById('verif-org').value,
+    gps||'',
+    followUp?(document.getElementById('followup-date').value||'Yes'):'No',
+    new Date().toISOString(),
+    auditLog.length+' entries',
+    isOff?'Offline':'Online'
+  ];
+  const record={values,parId,eviId,intId,ts:new Date().toISOString()};
+  addAudit('Form submitted','system',isOff?'Saved offline':'Submitting to Sheets');
+  if(isOff){
+    saveToIDB(record);queueCount++;updateNetStatus();
+    document.getElementById('submit-note').textContent='Saved locally — will sync when online';
+  } else {
+    try{
+      await appendRow(SHEET_EVIDENCE,values);
+      document.getElementById('submit-note').textContent='Saved to Google Sheets — queued for verification';
+    } catch(e){
+      saveToIDB(record);queueCount++;updateNetStatus();
+      document.getElementById('submit-note').textContent='Sheet error — saved locally for later sync';
+      console.error('Sheets write error:',e);
+    }
+  }
+  document.getElementById('final-par').textContent=parId;
+  document.getElementById('final-evi').textContent=eviId;
+  document.getElementById('final-int').textContent=intId;
+  document.getElementById('s10').classList.remove('active');
+  document.getElementById('s11').classList.add('active');
+  document.getElementById('pbar').style.width='100%';
+  document.getElementById('step-lbl').textContent='Submitted';
+  window.scrollTo(0,0);
+}
+
+function copyId(id,btn){const txt=document.getElementById(id).textContent;navigator.clipboard&&navigator.clipboard.writeText(txt);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);}
+
+function updateNetStatus(){const dot=document.getElementById('net-dot');const lbl=document.getElementById('net-label');const badge=document.getElementById('queue-badge');const banner=document.getElementById('offline-banner');isOnline=navigator.onLine;dot.className='dot '+(isOnline?'dot-online':'dot-offline');lbl.textContent=isOnline?'Online':'Offline';banner.style.display=isOnline?'none':'block';badge.textContent=queueCount+(queueCount===1?' pending':' pending');badge.className='sync-badge '+(queueCount===0?'none':'');}
+
+function resetAll(){step=1;outcomes=[];auditLog=[];uploadedFiles=[];gps=null;parId='';eviId='';intId='';srcVal='';confVal='';verifVal='Pending';followUp=null;document.getElementById('s11').classList.remove('active');document.getElementById('s1').classList.add('active');document.getElementById('pbar').style.width='10%';document.getElementById('step-lbl').textContent='Step 1 of '+TOTAL;document.querySelectorAll('input[type=text],input[type=number],input[type=date],textarea').forEach(el=>el.value='');document.querySelectorAll('.outcome-btn,.radio-opt').forEach(el=>{el.classList.remove('sel');const d=el.querySelector('.rdot');if(d)d.classList.remove('on');});document.getElementById('file-list').innerHTML='';document.getElementById('par-id').textContent='—';document.getElementById('evi-id').textContent='—';document.getElementById('int-id').textContent='—';renderAudit();}
+
+window.addEventListener('online',updateNetStatus);
+window.addEventListener('offline',updateNetStatus);
+updateNetStatus();
+</script>
+</body>
+</html>
