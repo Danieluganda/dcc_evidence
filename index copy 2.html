@@ -278,9 +278,9 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
     <div style="font-size:13px;color:#666;margin-bottom:1.5rem" id="submit-note">Saved and queued for back-office verification</div>
     <div style="margin-bottom:1rem;text-align:left">
       <div style="font-size:12px;color:#666;margin-bottom:8px">Reference IDs — copy and keep safe</div>
-      <div class="id-big"><span id="final-par">—</span><button class="copy-btn" onclick="copyId('final-par',this)">Copy</button></div>
-      <div class="id-big"><span id="final-evi">—</span><button class="copy-btn" onclick="copyId('final-evi',this)">Copy</button></div>
-      <div class="id-big"><span id="final-int">—</span><button class="copy-btn" onclick="copyId('final-int',this)">Copy</button></div>
+      <div class="id-big"><span id="final-par"></span><button class="copy-btn" onclick="copyId('final-par',this)">Copy</button></div>
+      <div class="id-big"><span id="final-evi"></span><button class="copy-btn" onclick="copyId('final-evi',this)">Copy</button></div>
+      <div class="id-big"><span id="final-int"></span><button class="copy-btn" onclick="copyId('final-int',this)">Copy</button></div>
     </div>
     <button class="submit-btn" onclick="resetAll()">Submit another record</button>
   </div>
@@ -304,15 +304,7 @@ function generateIds(){const name=document.getElementById('p-name').value;if(nam
 
 async function fetchSheetRows(sheetId){const url=`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${API_KEY}`;const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();const rows=data.values||[];if(rows.length<2)return[];const headers=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));return rows.slice(1).map(row=>{const obj={};headers.forEach((h,i)=>obj[h]=row[i]||'');return obj;});}
 
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw_btTbPIrKekZGvu2nB7CETQDjBROS8AV99rgXiOEiOT8eo3tVan-7E7qV5yLEa46l/exec';
-
-async function appendRow(values){
-  const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({values})});
-  if(!res.ok)throw new Error('Apps Script HTTP '+res.status);
-  const json=await res.json();
-  if(json.status!=='ok')throw new Error('Script error: '+JSON.stringify(json));
-  return json;
-}
+async function appendRow(sheetId,values){const url=`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1:append?valueInputOption=RAW&key=${API_KEY}`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:[values]})});if(!res.ok)throw new Error('Append HTTP '+res.status);return res.json();}
 
 async function lookupDCC(name){if(!name||name.length<3)return;const status=document.getElementById('dcc-status');status.style.display='block';status.style.color='#666';status.textContent='Looking up agent...';try{const agents=await fetchSheetRows(SHEET_AGENTS);const match=agents.find(a=>(a.dcc_name||'').toLowerCase()===name.toLowerCase()||(a.name||'').toLowerCase()===name.toLowerCase());if(match){dccUUID=match.dcc_uuid||match.uuid||genId('DCC');status.style.color='#1D9E75';status.textContent='Agent verified — UUID: '+dccUUID;addAudit('DCC verified',name,dccUUID);if(!participantsLoaded)await loadParticipants();}else{dccUUID=genId('DCC');status.style.color='#E24B4A';status.textContent='Agent not found in roster — new UUID assigned: '+dccUUID;addAudit('DCC not in roster',name,dccUUID);if(!participantsLoaded)await loadParticipants();}}catch(e){dccUUID=genId('DCC');status.style.color='#EF9F27';status.textContent='Sheet offline — UUID assigned: '+dccUUID;addAudit('DCC lookup offline',name,dccUUID);}}
 
@@ -392,7 +384,7 @@ async function submitForm(){
     document.getElementById('submit-note').textContent='Saved locally — will sync when online';
   } else {
     try{
-      await appendRow(values);
+      await appendRow(SHEET_EVIDENCE,values);
       document.getElementById('submit-note').textContent='Saved to Google Sheets — queued for verification';
     } catch(e){
       saveToIDB(record);queueCount++;updateNetStatus();
