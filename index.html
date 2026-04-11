@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DCC Evidence Collection Tool v2</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DCC Evidence Collection Tool</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f3;padding:1rem}
@@ -11,8 +11,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 .status-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f5f3;border-radius:8px;margin-bottom:1rem;font-size:12px}
 .status-left{display:flex;align-items:center;gap:10px}
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.dot-online{background:#1D9E75}
-.dot-offline{background:#E24B4A}
+.dot-online{background:#1D9E75}.dot-offline{background:#E24B4A}
 .sync-badge{background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
 .sync-badge.none{background:#E1F5EE;color:#085041}
 .ids-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
@@ -24,21 +23,21 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 .step-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .step-label{font-size:12px;color:#666}
 .audit-btn{font-size:11px;padding:4px 10px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666}
-.section{display:none}
-.section.active{display:block}
+.section{display:none}.section.active{display:block}
 .step-title{font-size:17px;font-weight:500;margin-bottom:1.25rem;color:#1a1a1a}
 .field{margin-bottom:1rem}
 .field label{display:block;font-size:12px;color:#666;margin-bottom:5px}
 .field label span{color:#E24B4A;margin-left:2px}
 .field input,.field select,.field textarea{width:100%;font-family:system-ui,sans-serif;font-size:14px;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;outline:none;background:white;color:#1a1a1a}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,0.1)}
+.field input[readonly]{background:#f9f9f9;color:#555}
 .field textarea{min-height:72px;resize:vertical}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
 .outcome-btn{padding:9px 10px;border:0.5px solid #ddd;border-radius:8px;background:white;cursor:pointer;font-size:13px;color:#1a1a1a;text-align:left;transition:all 0.15s}
 .outcome-btn.sel{border-color:#1D9E75;background:#E1F5EE;color:#085041}
-.upload-zone{border:1px dashed #ccc;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background 0.15s}
-.upload-zone:hover{background:#f9f9f9}
+.upload-zone{border:1.5px dashed #ccc;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background 0.15s}
+.upload-zone:hover{background:#f9f9f9;border-color:#1D9E75}
 .upload-zone input{display:none}
 .file-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
 .file-item{border:0.5px solid #ddd;border-radius:8px;padding:8px 10px;font-size:12px}
@@ -57,8 +56,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 .audit-row{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid #e0e0e0;font-size:11px;align-items:flex-start}
 .audit-row:last-child{border-bottom:none}
 .audit-time{color:#999;flex-shrink:0;font-family:monospace;min-width:52px}
-.audit-action{color:#666}
-.audit-val{color:#1a1a1a;font-weight:500;word-break:break-word;margin-left:auto}
+.audit-action{color:#666}.audit-val{color:#1a1a1a;font-weight:500;word-break:break-word;margin-left:auto}
 .submit-btn{width:100%;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;margin-top:0.5rem}
 .submit-btn:hover{background:#0F6E56}
 .success-wrap{padding:1.5rem 0;text-align:center}
@@ -75,6 +73,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 .meta-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:0.5px solid #e0e0e0}
 .meta-row:last-child{border-bottom:none}
 .review-card{background:white;border:0.5px solid #ddd;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.err-msg{font-size:11px;color:#E24B4A;margin-top:4px}
+.par-verified{font-size:11px;color:#1D9E75;margin-top:4px;font-weight:500}
 @media(max-width:480px){.ids-panel{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}}
 </style>
 </head>
@@ -116,29 +116,25 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 <!-- Step 1 -->
 <div class="section active" id="s1">
   <div class="step-title">Participant details</div>
-
   <div class="field">
     <label>DCC agent name <span>*</span></label>
-    <input type="text" id="p-dcc" placeholder="Your full name e.g. James Mugisha" oninput="onField('p-dcc','DCC agent set','p-dcc')" onblur="lookupDCC(this.value)" />
-    <div id="dcc-status" style="font-size:11px;margin-top:4px;display:none"></div>
+    <input type="text" id="p-dcc" placeholder="Your full name e.g. James Mugisha" onblur="addAudit('DCC agent set','p-dcc',this.value)" />
   </div>
-
   <div class="field" style="position:relative">
     <label>Participant name <span>*</span></label>
-      <input type="text" id="p-name" placeholder="Type to search participants..." autocomplete="off" />
+    <input type="text" id="p-name" placeholder="Type to search participants..." autocomplete="off" oninput="onNameInput(this.value)" />
     <div id="par-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ccc;border-radius:8px;z-index:10;max-height:200px;overflow-y:auto;margin-top:2px;box-shadow:0 4px 12px rgba(0,0,0,0.08)"></div>
     <div id="par-loading" style="display:none;font-size:11px;color:#666;margin-top:4px">Loading participants...</div>
-  </div>
-
-  <div class="field-row">
-    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Phone number" /></div>
-    <div class="field"><label>Confirm phone</label><input type="text" id="p-phone-confirm" placeholder="Re-type phone number" /></div>
+    <div id="par-verified" class="par-verified" style="display:none">Participant verified from system</div>
   </div>
   <div class="field-row">
-    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Email" /></div>
-    <div class="field"><label>Confirm email</label><input type="text" id="p-email-confirm" placeholder="Re-type email" /></div>
+    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Auto-filled" readonly /></div>
+    <div class="field"><label>Business name</label><input type="text" id="p-biz" placeholder="Auto-filled" readonly /></div>
   </div>
-
+  <div class="field-row">
+    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Auto-filled" readonly /></div>
+    <div class="field"><label>National ID?</label><input type="text" id="p-nid" placeholder="Auto-filled" readonly /></div>
+  </div>
   <div class="nav-row"><button class="btn-next" onclick="go(2)">Continue</button></div>
 </div>
 
@@ -159,11 +155,11 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 <!-- Step 3 -->
 <div class="section" id="s3">
   <div class="step-title">Outcome details</div>
-  <div class="field"><label>Date outcome occurred <span>*</span></label><input type="date" id="out-date" onchange="onField('out-date','Outcome date set','out-date')" /></div>
-  <div class="field"><label>Description <span>*</span></label><textarea id="out-desc" placeholder="e.g. First sale via WhatsApp, Received UGX 200,000 loan..." onblur="onField('out-desc','Description saved','out-desc')"></textarea></div>
+  <div class="field"><label>Date outcome occurred <span>*</span></label><input type="date" id="out-date" onchange="addAudit('Outcome date','out-date',this.value)" /></div>
+  <div class="field"><label>Description <span>*</span></label><textarea id="out-desc" placeholder="e.g. First sale via WhatsApp, Received UGX 200,000 loan..." onblur="addAudit('Description','out-desc',this.value.slice(0,40))"></textarea></div>
   <div class="field-row">
-    <div class="field"><label>Income before (UGX)</label><input type="number" id="inc-before" placeholder="0" onblur="onField('inc-before','Income before set','inc-before')" /></div>
-    <div class="field"><label>Income after (UGX)</label><input type="number" id="inc-after" placeholder="0" onblur="onField('inc-after','Income after set','inc-after')" /></div>
+    <div class="field"><label>Income before (UGX)</label><input type="number" id="inc-before" placeholder="0" /></div>
+    <div class="field"><label>Income after (UGX)</label><input type="number" id="inc-after" placeholder="0" /></div>
   </div>
   <div class="nav-row"><button class="btn-back" onclick="go(2)">Back</button><button class="btn-next" onclick="go(4)">Continue</button></div>
 </div>
@@ -171,15 +167,15 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 <!-- Step 4 -->
 <div class="section" id="s4">
   <div class="step-title">Evidence upload</div>
-  <p style="font-size:12px;color:#E24B4A;font-weight:500;margin-bottom:0.75rem">Required — images are auto-compressed before upload</p>
+  <p style="font-size:12px;color:#E24B4A;font-weight:500;margin-bottom:0.75rem">Required — images auto-compressed then uploaded to Drive</p>
   <div class="upload-zone" onclick="document.getElementById('ev-input').click()">
     <div style="font-size:13px;font-weight:500;margin-bottom:4px">Tap to add evidence</div>
     <div style="font-size:12px;color:#666">Photos, screenshots, PDFs, audio</div>
     <input type="file" id="ev-input" multiple accept="image/*,application/pdf,audio/*" onchange="handleFiles(this)" />
   </div>
   <div class="file-list" id="file-list"></div>
-  <div class="field"><label>Evidence type</label><select id="ev-type" onchange="onField('ev-type','Evidence type set','ev-type')"><option value="">Select...</option><option>Screenshot</option><option>Photo</option><option>Document</option><option>Audio testimony</option></select></div>
-  <div class="field"><label>What does this evidence prove? <span>*</span></label><textarea id="ev-desc" placeholder="e.g. Screenshot of payment confirmation from mobile money..." onblur="onField('ev-desc','Evidence description saved','ev-desc')"></textarea></div>
+  <div class="field"><label>Evidence type</label><select id="ev-type"><option value="">Select...</option><option>Screenshot</option><option>Photo</option><option>Document</option><option>Audio testimony</option></select></div>
+  <div class="field"><label>What does this evidence prove? <span>*</span></label><textarea id="ev-desc" placeholder="e.g. Screenshot of payment confirmation from mobile money..."></textarea></div>
   <div class="nav-row"><button class="btn-back" onclick="go(3)">Back</button><button class="btn-next" onclick="go(5)">Continue</button></div>
 </div>
 
@@ -191,7 +187,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
     <div class="meta-row"><span style="color:#666">Timestamp</span><span id="m-ts" style="font-weight:500;font-family:monospace;font-size:12px">—</span></div>
     <div class="meta-row"><span style="color:#666">Device</span><span id="m-dev" style="font-weight:500;font-size:12px">—</span></div>
     <div class="meta-row"><span style="color:#666">GPS</span><span id="m-gps" style="font-weight:500;font-size:12px;color:#999">Not captured</span></div>
-    <div class="meta-row"><span style="color:#666">Network at submit</span><span id="m-net" style="font-weight:500;font-size:12px">—</span></div>
+    <div class="meta-row"><span style="color:#666">Network</span><span id="m-net" style="font-weight:500;font-size:12px">—</span></div>
   </div>
   <button style="font-size:12px;padding:6px 14px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666" id="gps-btn" onclick="captureGPS()">Capture GPS</button>
   <div class="nav-row"><button class="btn-back" onclick="go(4)">Back</button><button class="btn-next" onclick="go(6)">Continue</button></div>
@@ -212,7 +208,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 <!-- Step 7 -->
 <div class="section" id="s7">
   <div class="step-title">DCC observation</div>
-  <div class="field"><label>Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..." onblur="onField('dcc-comment','DCC comment saved','dcc-comment')"></textarea></div>
+  <div class="field"><label>Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..."></textarea></div>
   <div class="field">
     <label>Confidence level</label>
     <div class="radio-group" id="conf-group">
@@ -235,10 +231,12 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
       <div class="radio-opt" onclick="selRadio('verif-group',this,'Rejected')"><div class="rdot"></div>Rejected</div>
     </div>
   </div>
-  <div class="field"><label>Verification method</label><select id="verif-method" onchange="onField('verif-method','Verification method set','verif-method')"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select></div>
+  <div class="field"><label>Verification method</label>
+    <select id="verif-method"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select>
+  </div>
   <div class="field-row">
-    <div class="field"><label>Verified by</label><input type="text" id="verif-name" placeholder="Name" onblur="onField('verif-name','Verifier set','verif-name')" /></div>
-    <div class="field"><label>Organization</label><input type="text" id="verif-org" placeholder="Org" onblur="onField('verif-org','Verifier org set','verif-org')" /></div>
+    <div class="field"><label>Verified by</label><input type="text" id="verif-name" placeholder="Name" /></div>
+    <div class="field"><label>Organization</label><input type="text" id="verif-org" placeholder="Org" /></div>
   </div>
   <div class="nav-row"><button class="btn-back" onclick="go(7)">Back</button><button class="btn-next" onclick="go(9)">Continue</button></div>
 </div>
@@ -253,7 +251,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
       <button class="outcome-btn" id="fu-no" onclick="setFU(false)">No</button>
     </div>
   </div>
-  <div id="fu-date-row" style="display:none" class="field"><label>Follow-up date</label><input type="date" id="fu-date" onchange="onField('fu-date','Follow-up date set','fu-date')" /></div>
+  <div id="fu-date-row" style="display:none" class="field"><label>Follow-up date</label><input type="date" id="fu-date" /></div>
   <div class="nav-row"><button class="btn-back" onclick="go(8)">Back</button><button class="btn-next" onclick="go(10)">Review &amp; submit</button></div>
 </div>
 
@@ -261,12 +259,13 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 <div class="section" id="s10">
   <div class="step-title">Review &amp; submit</div>
   <div id="review-cards"></div>
-  <hr class="section-divider" />
+  <hr class="section-divider"/>
   <div class="audit-panel-box">
     <div class="audit-title">Audit trail — this session</div>
     <div id="audit-log-final"></div>
   </div>
-  <button class="submit-btn" onclick="submitForm()">Submit evidence record</button>
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()">Submit evidence record</button>
+  <div style="font-size:11px;color:#666;text-align:center;margin-top:8px" id="submit-status"></div>
   <div class="nav-row" style="margin-top:8px"><button class="btn-back" onclick="go(9)">Back</button></div>
 </div>
 
@@ -289,306 +288,385 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 </div>
 
 <script>
-/* =========================
-   CONFIG
-========================= */
-const CONFIG = {
-  SHEETS: {
-    PARTICIPANTS: {
-      id: '1x4-wPAHIli3QqL_K2Xc-ur3E2-ICtm7ynuc8uByoEOc',
-      tab: 'foundation'
-    }
-  },
-  API_KEY: 'AIzaSyB1-kXAJsy_C1JKhZ2R0tYeuZhGq6eCOr0'
-};
+/* ── CONFIG ── */
+const API_KEY = 'AIzaSyB1-kXAJsy_C1JKhZ22R0tYeuZhGq6eCOr0';
+const SHEET_PARTICIPANTS_ID  = '1x4-wPAHIli3QqL_K2Xc-ur3E2-ICtm7ynuc8uByoEOc';
+const SHEET_PARTICIPANTS_TAB = 'foundation';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_btTbPIrKekZGvu2nB7CETQDjBROS8AV99rgXiOEiOT8eo3tVan-7E7qV5yLEa46l/exec';
 
-/* =========================
-   STATE
-========================= */
-const state = {
-  index: [],
-  loaded: false,
-  selected: null,
-  verified: false,
-  errors: {
-    phone: '',
-    email: ''
-  }
-};
+/* ── STATE ── */
+let step=1, TOTAL=10;
+let outcomes=[], auditLog=[], uploadedFiles=[], gps=null;
+let isOnline=navigator.onLine, queueCount=0;
+let parId='', eviId='', intId='';
+let srcVal='', confVal='', verifVal='Pending', followUp=null;
+let participantIndex=[], selectedParticipant=null;
 
-const $ = id => document.getElementById(id);
+/* ── UTILS ── */
+function genId(p){const d=new Date(),ds=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0'),r=Math.random().toString(36).substr(2,4).toUpperCase();return p+'-'+ds+'-'+r;}
+const norm = s=>(s||'').toLowerCase().trim().replace(/\s+/g,' ');
+const $ = id=>document.getElementById(id);
 
-/* =========================
-   UTIL
-========================= */
-const norm = s =>
-  (s || '')
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, ' ');
+/* ── AUDIT ── */
+function addAudit(action,field,val){
+  const now=new Date();
+  const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const dcc=$('p-dcc').value||'DCC agent';
+  auditLog.push({ts,dcc,action,field,val:String(val||'').slice(0,60)});
+  renderAudit();
+}
+function renderAudit(){
+  const html=auditLog.slice(-8).reverse().map(e=>`<div class="audit-row"><span class="audit-time">${e.ts}</span><span class="audit-action">${e.dcc} — ${e.action}</span><span class="audit-val">${e.val}</span></div>`).join('');
+  $('audit-log').innerHTML=html||'<div style="font-size:12px;color:#999">No actions yet</div>';
+}
+function toggleAudit(){const p=$('audit-panel');p.style.display=p.style.display==='none'?'block':'none';}
 
-function cleanHeader(h){
-  return (h||'')
-    .toLowerCase()
-    .trim()
-    .replace(/\n/g,' ');
+/* ── NAVIGATION ── */
+function go(n){
+  if(n===2&&!selectedParticipant){alert('Please select a participant from the list first.');return;}
+  $('s'+step).classList.remove('active');
+  step=n;
+  $('s'+n).classList.add('active');
+  $('pbar').style.width=Math.round((n/TOTAL)*100)+'%';
+  $('step-lbl').textContent='Step '+n+' of '+TOTAL;
+  if(n===5)fillMeta();
+  if(n===10)buildReview();
+  addAudit('Navigated to step','step',n);
+  window.scrollTo(0,0);
 }
 
-/* =========================
-   ERROR UI HELPERS
-========================= */
-function setError(fieldId, msg){
-  const el = $(fieldId);
-  if (!el) return;
-
-  let err = el.parentNode.querySelector('.err-msg');
-
-  if (!err){
-    err = document.createElement('div');
-    err.className = 'err-msg';
-    err.style.fontSize = '11px';
-    err.style.color = '#E24B4A';
-    err.style.marginTop = '4px';
-    el.parentNode.appendChild(err);
-  }
-
-  err.innerText = msg || '';
-}
-
-function clearError(fieldId){
-  const el = $(fieldId);
-  if (!el) return;
-
-  const err = el.parentNode.querySelector('.err-msg');
-  if (err) err.innerText = '';
-}
-
-/* =========================
-   LOAD SHEET
-========================= */
-async function loadParticipants() {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/` +
-    `${CONFIG.SHEETS.PARTICIPANTS.id}/values/` +
-    `${encodeURIComponent(CONFIG.SHEETS.PARTICIPANTS.tab)}?key=${CONFIG.API_KEY}`;
-
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.error) {
-      console.error("Sheet error:", data.error);
-      alert("Failed to load participant database");
-      return;
-    }
-
-    const rows = data.values || [];
-    const headers = rows[0].map(cleanHeader);
-
-    const parsed = rows.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h,i)=> obj[h] = (r[i] || '').trim());
+/* ── LOAD PARTICIPANTS FROM SHEET ── */
+async function loadParticipants(){
+  $('par-loading').style.display='block';
+  const url=`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_PARTICIPANTS_ID}/values/${encodeURIComponent(SHEET_PARTICIPANTS_TAB)}?key=${API_KEY}`;
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.error){console.error('Sheet error:',data.error);$('par-loading').textContent='Failed to load participants';return;}
+    const rows=data.values||[];
+    const headers=rows[0].map(h=>(h||'').toLowerCase().trim().replace(/\n/g,' '));
+    participantIndex=rows.slice(1).map(r=>{
+      const obj={};
+      headers.forEach((h,i)=>obj[h]=(r[i]||'').trim());
       return obj;
     });
-
-    state.index = parsed.map(p => ({
-      name: norm(`${p['first name'] || ''} ${p['surname'] || ''}`),
-      phone: (p['primary phone number'] || '').trim(),
-      email: (p['email'] || '').trim(),
-      raw: Object.freeze(p)
-    }));
-
-    state.loaded = true;
-    console.log("Audit DB loaded:", state.index.length);
-
-  } catch (err) {
-    console.error(err);
-  }
+    addAudit('Participants loaded',participantIndex.length+' records','');
+  }catch(e){console.error(e);addAudit('Participant load failed',e.message,'');}
+  finally{$('par-loading').style.display='none';}
 }
 
-/* =========================
-   SEARCH
-========================= */
-function search(q){
-  q = norm(q);
-  if (!q) return [];
-
-  return state.index
-    .filter(p => p.name.includes(q))
-    .slice(0, 6);
+/* ── PARTICIPANT SEARCH ── */
+let searchTimer;
+function onNameInput(q){
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>{
+    if(!q||q.length<2){$('par-dropdown').style.display='none';return;}
+    const matches=participantIndex.filter(p=>{
+      const fullName=norm((p['first name']||'')+' '+(p['surname']||''));
+      const bizName=norm(p['business name']||p['business_name']||'');
+      return fullName.includes(norm(q))||bizName.includes(norm(q));
+    }).slice(0,8);
+    showDropdown(matches);
+  },120);
 }
 
-/* =========================
-   DROPDOWN
-========================= */
 function showDropdown(items){
-  const box = $('par-dropdown');
-  if (!box) return;
-
-  if (!items.length){
-    box.style.display = 'none';
-    return;
-  }
-
-  box.innerHTML = items.map(i => `
-    <div style="padding:8px;cursor:pointer;border-bottom:1px solid #eee"
-      onclick="selectUser('${i.email}')">
-      <div style="font-weight:600">${i.raw['first name']} ${i.raw['surname']}</div>
-      <div style="font-size:11px;color:#666">${i.phone} • ${i.email}</div>
-    </div>
-  `).join('');
-
-  box.style.display = 'block';
+  const box=$('par-dropdown');
+  if(!items.length){box.style.display='none';return;}
+  box.innerHTML=items.map((p,i)=>`
+    <div onclick="selectParticipant(${i})" style="padding:10px 12px;cursor:pointer;border-bottom:0.5px solid #eee;font-size:13px" onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''">
+      <div style="font-weight:500">${p['first name']||''} ${p['surname']||''}</div>
+      <div style="font-size:11px;color:#666;margin-top:2px">${p['business name']||p['business_name']||'No business'} · ${p['primary phone number']||p['phone_number']||'—'}</div>
+    </div>`).join('');
+  box.style.display='block';
+  window._pmatches=items;
 }
 
-/* =========================
-   SELECT USER (LOCKED)
-========================= */
-window.selectUser = function(email){
+function selectParticipant(idx){
+  const p=window._pmatches[idx];
+  selectedParticipant=p;
+  const fullName=((p['first name']||'')+' '+(p['surname']||'')).trim();
+  $('p-name').value=fullName;
+  $('p-phone').value=p['primary phone number']||p['phone_number']||'';
+  $('p-biz').value=p['business name']||p['business_name']||'';
+  $('p-email').value=p['email']||'';
+  $('p-nid').value=p['does the young woman in business have a national i.d?']||p['has_national_id']||'';
+  $('par-dropdown').style.display='none';
+  $('par-verified').style.display='block';
+  parId=p['participant_id']||genId('PAR');
+  eviId=genId('EVI');
+  intId=genId('INT');
+  $('par-id').textContent=parId;
+  $('evi-id').textContent=eviId;
+  $('int-id').textContent=intId;
+  addAudit('Participant selected',fullName,parId);
+}
 
-  const u = state.index.find(x => x.email === email);
-  if (!u) return;
+document.addEventListener('click',function(e){
+  const dd=$('par-dropdown');
+  if(dd&&!dd.contains(e.target)&&e.target.id!=='p-name')dd.style.display='none';
+});
 
-  state.selected = Object.freeze({
-    name: u.name,
-    phone: u.phone,
-    email: u.email
+/* ── OUTCOMES ── */
+function togOut(btn,val){
+  btn.classList.toggle('sel');
+  const i=outcomes.indexOf(val);
+  if(i===-1){outcomes.push(val);addAudit('Outcome added','outcome',val);}
+  else{outcomes.splice(i,1);addAudit('Outcome removed','outcome',val);}
+}
+
+/* ── FILE UPLOAD + COMPRESSION + DRIVE ── */
+async function blobToBase64(blob){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(blob);
   });
-
-  $('p-name').value = u.name;
-  $('p-phone').value = u.phone;
-  $('p-email').value = u.email;
-
-  $('p-phone').readOnly = true;
-  $('p-email').readOnly = true;
-
-  $('p-phone-confirm').value = '';
-  $('p-email-confirm').value = '';
-
-  clearError('p-phone-confirm');
-  clearError('p-email-confirm');
-
-  state.verified = false;
-
-  $('par-dropdown').style.display = 'none';
-
-  validateMatch();
-};
-
-/* =========================
-   LIVE AUTOCOMPLETE
-========================= */
-let t;
-function onNameInput(e){
-  clearTimeout(t);
-  t = setTimeout(()=>{
-    showDropdown(search(e.target.value));
-  }, 120);
 }
 
-/* =========================
-   VALIDATION + ERROR MESSAGES (FIX)
-========================= */
-function validateMatch(){
-
-  if (!state.selected) return false;
-
-  const phone = $('p-phone').value;
-  const email = $('p-email').value;
-
-  const phoneConfirm = $('p-phone-confirm').value;
-  const emailConfirm = $('p-email-confirm').value;
-
-  const phoneMatch = norm(phone) === norm(state.selected.phone);
-  const emailMatch = norm(email) === norm(state.selected.email);
-
-  const phoneConfirmMatch = norm(phoneConfirm) === norm(state.selected.phone);
-  const emailConfirmMatch = norm(emailConfirm) === norm(state.selected.email);
-
-  // RESET ERRORS FIRST
-  clearError('p-phone-confirm');
-  clearError('p-email-confirm');
-
-  // FIELD LEVEL ERRORS (THIS IS WHAT WAS MISSING)
-  if (!phoneConfirmMatch && phoneConfirm.length > 0){
-    setError('p-phone-confirm',
-      "Phone does not match selected participant record"
-    );
-  }
-
-  if (!emailConfirmMatch && emailConfirm.length > 0){
-    setError('p-email-confirm',
-      "Email does not match selected participant record"
-    );
-  }
-
-  // SYSTEM MISMATCH ERROR (PRIMARY)
-  if (!phoneMatch || !emailMatch){
-    state.verified = false;
-    return false;
-  }
-
-  state.verified =
-    phoneConfirmMatch &&
-    emailConfirmMatch;
-
-  const btn = document.querySelector('.btn-next');
-
-  if (btn){
-    btn.disabled = !state.verified;
-    btn.style.opacity = state.verified ? "1" : "0.4";
-    btn.style.pointerEvents = state.verified ? "auto" : "none";
-  }
-
-  return state.verified;
+async function uploadToDrive(file,blob){
+  try{
+    const b64=await blobToBase64(blob);
+    const url=APPS_SCRIPT_URL+'?action=upload'+
+      '&filename='+encodeURIComponent(file.name)+
+      '&mimeType='+encodeURIComponent(blob.type||file.type)+
+      '&data='+encodeURIComponent(b64);
+    await fetch(url,{method:'GET',mode:'no-cors'});
+    return '[Drive uploaded]';
+  }catch(e){return '[Upload failed: '+e.message+']';}
 }
 
-/* =========================
-   LIVE VALIDATION
-========================= */
-['p-phone-confirm','p-email-confirm'].forEach(id=>{
-  const el = $(id);
-  if (el){
-    el.addEventListener('input', validateMatch);
-  }
-});
+function compressImage(file,maxW=900,quality=0.72){
+  return new Promise((res,rej)=>{
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const sc=Math.min(maxW/img.width,1),c=document.createElement('canvas');
+      c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>{URL.revokeObjectURL(url);b?res(b):rej();},'image/jpeg',quality);
+    };
+    img.onerror=rej;img.src=url;
+  });
+}
 
-/* =========================
-   STEP GATE
-========================= */
-window.go = function(step){
+async function handleFiles(inp){
+  const fl=$('file-list');
+  for(const file of Array.from(inp.files)){
+    const isImg=file.type.startsWith('image/');
+    const origKB=Math.round(file.size/1024);
+    const uid='f'+Date.now()+Math.random().toString(36).substr(2,4);
+    const div=document.createElement('div');
+    div.className='file-item';
+    div.innerHTML=`<div class="file-meta"><span style="font-weight:500">${file.name}</span><span class="saving-tag" id="tag-${uid}">${isImg?'Compressing...':'Uploading...'}</span></div>`+(isImg?`<div class="compress-bar-wrap"><div class="compress-bar" id="bar-${uid}" style="width:100%"></div></div><div class="file-sizes" id="sz-${uid}">${origKB} KB...</div>`:`<div class="file-sizes">${origKB} KB</div>`);
+    fl.appendChild(div);
 
-  if (step === 2){
+    try{
+      let uploadBlob=file;
+      let compKB=origKB, saving=0;
 
-    if (!state.selected){
-      alert("No participant selected from system.");
-      return;
+      if(isImg){
+        const compressed=await compressImage(file);
+        compKB=Math.round(compressed.size/1024);
+        saving=Math.round((1-compressed.size/file.size)*100);
+        uploadBlob=compressed;
+        const pct=Math.round((compKB/origKB)*100);
+        const barEl=$('bar-'+uid),szEl=$('sz-'+uid),tagEl=$('tag-'+uid);
+        if(barEl)barEl.style.width=pct+'%';
+        if(szEl)szEl.textContent=origKB+' KB → '+compKB+' KB ('+saving+'% saved)';
+        if(tagEl)tagEl.textContent='Uploading to Drive...';
+      }
+
+      const driveRef=await uploadToDrive(file,uploadBlob);
+      const tagEl=$('tag-'+uid);
+      if(tagEl)tagEl.textContent=isImg?saving+'% saved — Drive sent':'Drive sent';
+      uploadedFiles.push({name:file.name,origKB,compKB,saving,driveRef});
+      addAudit('File uploaded',file.name,origKB+'KB'+(saving?' → '+compKB+'KB':''));
+    }catch(e){
+      uploadedFiles.push({name:file.name,origKB,compKB:origKB,saving:0,driveRef:''});
+      const tagEl=$('tag-'+uid);
+      if(tagEl)tagEl.textContent='Saved locally';
+      addAudit('File error',file.name,e.message);
     }
+  }
+}
 
-    if (!validateMatch()){
-      alert(
-        "Verification failed:\n" +
-        "- Check phone/email match system record\n" +
-        "- Ensure confirmation fields are correct"
-      );
-      return;
-    }
+/* ── METADATA ── */
+function fillMeta(){
+  $('m-ts').textContent=new Date().toLocaleString('en-UG');
+  $('m-dev').textContent=/Mobi|Android/i.test(navigator.userAgent)?'Mobile':'Desktop';
+  $('m-net').textContent=isOnline?'Online':'Offline';
+  addAudit('Metadata captured','system','ts+device+network');
+}
+function captureGPS(){
+  const btn=$('gps-btn');btn.textContent='Capturing...';btn.disabled=true;
+  navigator.geolocation?navigator.geolocation.getCurrentPosition(
+    pos=>{gps=pos.coords.latitude.toFixed(5)+', '+pos.coords.longitude.toFixed(5);$('m-gps').textContent=gps;$('m-gps').style.color='#1a1a1a';btn.textContent='GPS captured';addAudit('GPS','location',gps);},
+    ()=>{btn.textContent='Retry GPS';btn.disabled=false;}
+  ):(btn.textContent='Not supported');
+}
+
+/* ── RADIO / TOGGLE ── */
+function selRadio(groupId,el,val){
+  document.getElementById(groupId).querySelectorAll('.radio-opt').forEach(r=>{r.classList.remove('sel');r.querySelector('.rdot').classList.remove('on');});
+  el.classList.add('sel');el.querySelector('.rdot').classList.add('on');
+  if(groupId==='src-group')srcVal=val;
+  if(groupId==='conf-group')confVal=val;
+  if(groupId==='verif-group')verifVal=val;
+  addAudit('Selected',groupId,val);
+}
+function setFU(val){
+  followUp=val;
+  $('fu-yes').classList.toggle('sel',val===true);
+  $('fu-no').classList.toggle('sel',val===false);
+  $('fu-date-row').style.display=val?'block':'none';
+}
+
+/* ── REVIEW ── */
+function buildReview(){
+  const rows=[
+    ['Participant',$('p-name').value||'—'],
+    ['DCC agent',$('p-dcc').value||'—'],
+    ['Participant ID',parId||'—'],
+    ['Evidence ID',eviId||'—'],
+    ['Intervention ID',intId||'—'],
+    ['Outcomes',outcomes.join(', ')||'—'],
+    ['Outcome date',$('out-date').value||'—'],
+    ['Files',uploadedFiles.length?uploadedFiles.map(f=>f.name).join(', '):'None'],
+    ['Evidence source',srcVal||'—'],
+    ['Confidence',confVal||'—'],
+    ['Verification',verifVal],
+    ['Follow-up',followUp?($('fu-date').value||'Yes'):'No'],
+    ['Audit entries',auditLog.length+' logged']
+  ];
+  $('review-cards').innerHTML='<div class="review-card">'+rows.map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #e0e0e0;font-size:13px"><span style="color:#666">${k}</span><span style="font-weight:500;max-width:55%;text-align:right">${v}</span></div>`).join('')+'</div>';
+  $('audit-log-final').innerHTML=auditLog.map(e=>`<div class="audit-row"><span class="audit-time">${e.ts}</span><span class="audit-action">${e.action}</span><span class="audit-val">${e.val}</span></div>`).join('')||'<div style="font-size:12px;color:#999">No entries</div>';
+}
+
+/* ── OFFLINE QUEUE ── */
+function saveToIDB(record){
+  try{
+    const req=indexedDB.open('dcc-offline-queue',1);
+    req.onupgradeneeded=e=>e.target.result.createObjectStore('queue',{keyPath:'id',autoIncrement:true});
+    req.onsuccess=e=>e.target.result.transaction('queue','readwrite').objectStore('queue').add(record);
+  }catch(e){}
+}
+
+/* ── SUBMIT ── */
+async function submitForm(){
+  const btn=$('submit-btn');
+  const statusEl=$('submit-status');
+  btn.disabled=true;btn.textContent='Submitting...';
+  statusEl.textContent='';
+
+  const values=[
+    eviId, parId, intId,
+    $('p-dcc').value,
+    $('p-name').value,
+    $('p-phone').value,
+    $('p-biz').value,
+    $('p-email').value,
+    $('p-nid').value,
+    outcomes.join(', '),
+    $('out-date').value,
+    $('out-desc').value,
+    $('inc-before').value,
+    $('inc-after').value,
+    uploadedFiles.length+' file(s): '+uploadedFiles.map(f=>f.name+' '+f.driveRef).join(' | '),
+    $('ev-type').value,
+    $('ev-desc').value,
+    srcVal,
+    confVal,
+    verifVal,
+    $('verif-method').value,
+    $('verif-name').value,
+    $('verif-org').value,
+    gps||'',
+    followUp?($('fu-date').value||'Yes'):'No',
+    new Date().toISOString(),
+    auditLog.length+' entries',
+    isOnline?'Online':'Offline'
+  ];
+
+  const record={values,parId,eviId,intId,ts:new Date().toISOString()};
+  addAudit('Submitting form','system','');
+
+  if(!isOnline){
+    saveToIDB(record);queueCount++;updateNetStatus();
+    $('submit-note').textContent='Saved locally — will sync when online';
+    showSuccess();return;
   }
 
-  document.querySelectorAll('.section')
-    .forEach(s => s.classList.remove('active'));
+  try{
+    statusEl.textContent='Sending to Google Sheets...';
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'append',values})
+    });
+    $('submit-note').textContent='Saved to Google Sheets — queued for verification';
+    addAudit('Submitted to Sheets','system','success');
+    showSuccess();
+  }catch(e){
+    console.error('Submit error:',e);
+    saveToIDB(record);queueCount++;updateNetStatus();
+    $('submit-note').textContent='Network error — saved locally for later sync';
+    addAudit('Submit failed — saved offline','system',e.message);
+    showSuccess();
+  }
+}
 
-  const target = document.getElementById('s'+step);
-  if (target) target.classList.add('active');
-};
+function showSuccess(){
+  $('final-par').textContent=parId;
+  $('final-evi').textContent=eviId;
+  $('final-int').textContent=intId;
+  $('s10').classList.remove('active');
+  $('s11').classList.add('active');
+  $('pbar').style.width='100%';
+  $('step-lbl').textContent='Submitted';
+  window.scrollTo(0,0);
+}
 
-/* =========================
-   INIT
-========================= */
-window.addEventListener('DOMContentLoaded', async ()=>{
-  await loadParticipants();
-  $('p-name')?.addEventListener('input', onNameInput);
-});
+/* ── COPY ── */
+function copyId(id,btn){
+  const txt=$(id).textContent;
+  navigator.clipboard&&navigator.clipboard.writeText(txt);
+  btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);
+}
+
+/* ── RESET ── */
+function resetAll(){
+  step=1;outcomes=[];auditLog=[];uploadedFiles=[];gps=null;
+  parId='';eviId='';intId='';srcVal='';confVal='';verifVal='Pending';followUp=null;
+  selectedParticipant=null;
+  $('s11').classList.remove('active');$('s1').classList.add('active');
+  $('pbar').style.width='10%';$('step-lbl').textContent='Step 1 of '+TOTAL;
+  document.querySelectorAll('input[type=text],input[type=number],input[type=date],textarea').forEach(el=>{el.value='';el.readOnly=false;});
+  document.querySelectorAll('.outcome-btn,.radio-opt').forEach(el=>{el.classList.remove('sel');const d=el.querySelector('.rdot');if(d)d.classList.remove('on');});
+  $('file-list').innerHTML='';
+  $('par-id').textContent='—';$('evi-id').textContent='—';$('int-id').textContent='—';
+  $('par-verified').style.display='none';
+  const btn=$('submit-btn');if(btn){btn.disabled=false;btn.textContent='Submit evidence record';}
+  renderAudit();
+}
+
+/* ── NETWORK ── */
+function updateNetStatus(){
+  isOnline=navigator.onLine;
+  $('net-dot').className='dot '+(isOnline?'dot-online':'dot-offline');
+  $('net-label').textContent=isOnline?'Online':'Offline';
+  $('offline-banner').style.display=isOnline?'none':'block';
+  $('queue-badge').textContent=queueCount+' pending';
+  $('queue-badge').className='sync-badge '+(queueCount===0?'none':'');
+}
+
+window.addEventListener('online',updateNetStatus);
+window.addEventListener('offline',updateNetStatus);
+updateNetStatus();
+
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded',()=>loadParticipants());
 </script>
 </body>
 </html>
