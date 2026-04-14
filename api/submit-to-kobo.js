@@ -2,8 +2,8 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 const crypto = require('crypto');
 
-const KOBO_FORM_ID = 'aNZHBjwUHgTJUUSbZuEhFd';
-const KOBO_TOKEN = process.env.KOBO_TOKEN;
+const KOBO_FORM_ID = process.env.KOBO_FORM_ID || 'aNZHBjwUHgTJUUSbZuEhFd';
+const KOBO_TOKEN = process.env.KOBO_TOKEN || '';
 const KOBO_URL = 'https://kc.kobotoolbox.org/submission';
 
 const MAP = {

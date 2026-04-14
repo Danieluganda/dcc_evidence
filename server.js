@@ -22,8 +22,8 @@ app.use(bodyParser.json());
 // ==============================
 // KOBO CONFIG
 // ==============================
-const KOBO_FORM_ID = 'aNZHBjwUHgTJUUSbZuEhFd';
-const KOBO_TOKEN = '070760df54724dec37f37cef0c2f572e184af535'; // 🔴 replace this
+const KOBO_FORM_ID = process.env.KOBO_FORM_ID || 'aNZHBjwUHgTJUUSbZuEhFd';
+const KOBO_TOKEN = process.env.KOBO_TOKEN || '';
 const KOBO_URL = 'https://kc.kobotoolbox.org/submission';
 
 // ==============================
