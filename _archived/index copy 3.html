@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DCC Evidence Collection Tool v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f3;padding:1rem}
+.wrap{max-width:600px;margin:0 auto;background:white;border-radius:12px;padding:1.25rem;border:0.5px solid #ddd}
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f5f3;border-radius:8px;margin-bottom:1rem;font-size:12px}
+.status-left{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-online{background:#1D9E75}
+.dot-offline{background:#E24B4A}
+.sync-badge{background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+.sync-badge.none{background:#E1F5EE;color:#085041}
+.ids-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
+.id-card{background:white;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px}
+.id-label{font-size:11px;color:#666;margin-bottom:4px}
+.id-val{font-size:11px;font-weight:500;font-family:monospace;color:#1a1a1a;word-break:break-all}
+.progress-bar{height:3px;background:#f0f0f0;border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.progress-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width 0.3s}
+.step-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.step-label{font-size:12px;color:#666}
+.audit-btn{font-size:11px;padding:4px 10px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666}
+.section{display:none}
+.section.active{display:block}
+.step-title{font-size:17px;font-weight:500;margin-bottom:1.25rem;color:#1a1a1a}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:12px;color:#666;margin-bottom:5px}
+.field label span{color:#E24B4A;margin-left:2px}
+.field input,.field select,.field textarea{width:100%;font-family:system-ui,sans-serif;font-size:14px;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;outline:none;background:white;color:#1a1a1a}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,0.1)}
+.field textarea{min-height:72px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.outcome-btn{padding:9px 10px;border:0.5px solid #ddd;border-radius:8px;background:white;cursor:pointer;font-size:13px;color:#1a1a1a;text-align:left;transition:all 0.15s}
+.outcome-btn.sel{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.upload-zone{border:1px dashed #ccc;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background 0.15s}
+.upload-zone:hover{background:#f9f9f9}
+.upload-zone input{display:none}
+.file-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.file-item{border:0.5px solid #ddd;border-radius:8px;padding:8px 10px;font-size:12px}
+.file-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.compress-bar-wrap{height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden}
+.compress-bar{height:100%;background:#1D9E75;border-radius:2px;transition:width 0.4s}
+.file-sizes{font-size:11px;color:#666;margin-top:3px}
+.saving-tag{background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:500}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.nav-row button{flex:1;padding:10px;border-radius:8px;font-size:14px;cursor:pointer;border:0.5px solid #ccc;background:white;color:#1a1a1a;transition:all 0.15s}
+.btn-next{background:#085041;border-color:#085041;color:white}
+.btn-next:hover{background:#0F6E56}
+.btn-back{color:#666}
+.audit-panel-box{background:#f5f5f3;border-radius:8px;padding:1rem;margin-bottom:1rem}
+.audit-title{font-size:12px;font-weight:500;color:#666;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
+.audit-row{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid #e0e0e0;font-size:11px;align-items:flex-start}
+.audit-row:last-child{border-bottom:none}
+.audit-time{color:#999;flex-shrink:0;font-family:monospace;min-width:52px}
+.audit-action{color:#666}
+.audit-val{color:#1a1a1a;font-weight:500;word-break:break-word;margin-left:auto}
+.submit-btn{width:100%;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;margin-top:0.5rem}
+.submit-btn:hover{background:#0F6E56}
+.success-wrap{padding:1.5rem 0;text-align:center}
+.id-big{font-family:monospace;font-size:13px;font-weight:500;background:#f5f5f3;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;text-align:left}
+.copy-btn{font-size:11px;padding:3px 8px;border:0.5px solid #ccc;border-radius:6px;background:white;cursor:pointer;color:#666;flex-shrink:0;margin-left:8px}
+.offline-banner{display:none;background:#FAEEDA;color:#633806;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:1rem;border:0.5px solid #EF9F27}
+.radio-group{display:flex;flex-direction:column;gap:6px}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:0.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a1a;transition:all 0.15s}
+.radio-opt.sel{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.rdot{width:14px;height:14px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.rdot.on::after{content:'';width:7px;height:7px;border-radius:50%;background:#1D9E75}
+.section-divider{border:none;border-top:0.5px solid #e0e0e0;margin:1.25rem 0}
+.meta-card{background:#f5f5f3;border-radius:8px;padding:12px 14px;margin-bottom:1rem}
+.meta-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:0.5px solid #e0e0e0}
+.meta-row:last-child{border-bottom:none}
+.review-card{background:white;border:0.5px solid #ddd;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+@media(max-width:480px){.ids-panel{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="offline-banner" id="offline-banner">You are offline. Records will be saved locally and synced when you reconnect.</div>
+
+<div class="status-bar">
+  <div class="status-left">
+    <div class="dot dot-online" id="net-dot"></div>
+    <span id="net-label" style="color:#666">Online</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:11px;color:#666">Queue:</span>
+    <span class="sync-badge none" id="queue-badge">0 pending</span>
+  </div>
+</div>
+
+<div class="ids-panel">
+  <div class="id-card"><div class="id-label">Participant ID</div><div class="id-val" id="par-id">—</div></div>
+  <div class="id-card"><div class="id-label">Evidence ID</div><div class="id-val" id="evi-id">—</div></div>
+  <div class="id-card"><div class="id-label">Intervention ID</div><div class="id-val" id="int-id">—</div></div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="pbar" style="width:10%"></div></div>
+<div class="step-row">
+  <span class="step-label" id="step-lbl">Step 1 of 10</span>
+  <button class="audit-btn" onclick="toggleAudit()">Audit trail</button>
+</div>
+
+<div id="audit-panel" style="display:none">
+  <div class="audit-panel-box">
+    <div class="audit-title">Audit trail</div>
+    <div id="audit-log"><div style="font-size:12px;color:#999">No actions yet</div></div>
+  </div>
+</div>
+
+<!-- Step 1 -->
+<div class="section active" id="s1">
+  <div class="step-title">Participant details</div>
+
+  <div class="field">
+    <label>DCC agent name <span>*</span></label>
+    <input type="text" id="p-dcc" placeholder="Your full name e.g. James Mugisha" oninput="onField('p-dcc','DCC agent set','p-dcc')" onblur="lookupDCC(this.value)" />
+    <div id="dcc-status" style="font-size:11px;margin-top:4px;display:none"></div>
+  </div>
+
+  <div class="field" style="position:relative">
+    <label>Participant name <span>*</span></label>
+      <input type="text" id="p-name" placeholder="Type to search participants..." autocomplete="off" />
+    <div id="par-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ccc;border-radius:8px;z-index:10;max-height:200px;overflow-y:auto;margin-top:2px;box-shadow:0 4px 12px rgba(0,0,0,0.08)"></div>
+    <div id="par-loading" style="display:none;font-size:11px;color:#666;margin-top:4px">Loading participants...</div>
+  </div>
+
+  <div class="field-row">
+    <div class="field"><label>Phone number</label><input type="text" id="p-phone" placeholder="Phone number" /></div>
+    <div class="field"><label>Confirm phone</label><input type="text" id="p-phone-confirm" placeholder="Re-type phone number" /></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Email</label><input type="text" id="p-email" placeholder="Email" /></div>
+    <div class="field"><label>Confirm email</label><input type="text" id="p-email-confirm" placeholder="Re-type email" /></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="go(2)">Continue</button></div>
+</div>
+
+<!-- Step 2 -->
+<div class="section" id="s2">
+  <div class="step-title">Outcomes reported</div>
+  <div class="outcome-grid">
+    <button class="outcome-btn" onclick="togOut(this,'Got a job')">Got a job</button>
+    <button class="outcome-btn" onclick="togOut(this,'Started a business')">Started a business</button>
+    <button class="outcome-btn" onclick="togOut(this,'Made a sale')">Made a sale</button>
+    <button class="outcome-btn" onclick="togOut(this,'Increased income')">Increased income</button>
+    <button class="outcome-btn" onclick="togOut(this,'Accessed digital credit')">Accessed digital credit</button>
+    <button class="outcome-btn" onclick="togOut(this,'Adopted digital tools')">Adopted digital tools</button>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(1)">Back</button><button class="btn-next" onclick="go(3)">Continue</button></div>
+</div>
+
+<!-- Step 3 -->
+<div class="section" id="s3">
+  <div class="step-title">Outcome details</div>
+  <div class="field"><label>Date outcome occurred <span>*</span></label><input type="date" id="out-date" onchange="onField('out-date','Outcome date set','out-date')" /></div>
+  <div class="field"><label>Description <span>*</span></label><textarea id="out-desc" placeholder="e.g. First sale via WhatsApp, Received UGX 200,000 loan..." onblur="onField('out-desc','Description saved','out-desc')"></textarea></div>
+  <div class="field-row">
+    <div class="field"><label>Income before (UGX)</label><input type="number" id="inc-before" placeholder="0" onblur="onField('inc-before','Income before set','inc-before')" /></div>
+    <div class="field"><label>Income after (UGX)</label><input type="number" id="inc-after" placeholder="0" onblur="onField('inc-after','Income after set','inc-after')" /></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(2)">Back</button><button class="btn-next" onclick="go(4)">Continue</button></div>
+</div>
+
+<!-- Step 4 -->
+<div class="section" id="s4">
+  <div class="step-title">Evidence upload</div>
+  <p style="font-size:12px;color:#E24B4A;font-weight:500;margin-bottom:0.75rem">Required — images are auto-compressed before upload</p>
+  <div class="upload-zone" onclick="document.getElementById('ev-input').click()">
+    <div style="font-size:13px;font-weight:500;margin-bottom:4px">Tap to add evidence</div>
+    <div style="font-size:12px;color:#666">Photos, screenshots, PDFs, audio</div>
+    <input type="file" id="ev-input" multiple accept="image/*,application/pdf,audio/*" onchange="handleFiles(this)" />
+  </div>
+  <div class="file-list" id="file-list"></div>
+  <div class="field"><label>Evidence type</label><select id="ev-type" onchange="onField('ev-type','Evidence type set','ev-type')"><option value="">Select...</option><option>Screenshot</option><option>Photo</option><option>Document</option><option>Audio testimony</option></select></div>
+  <div class="field"><label>What does this evidence prove? <span>*</span></label><textarea id="ev-desc" placeholder="e.g. Screenshot of payment confirmation from mobile money..." onblur="onField('ev-desc','Evidence description saved','ev-desc')"></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="go(3)">Back</button><button class="btn-next" onclick="go(5)">Continue</button></div>
+</div>
+
+<!-- Step 5 -->
+<div class="section" id="s5">
+  <div class="step-title">Auto-captured metadata</div>
+  <p style="font-size:12px;color:#666;margin-bottom:1rem">System-generated — cannot be edited by DCC</p>
+  <div class="meta-card">
+    <div class="meta-row"><span style="color:#666">Timestamp</span><span id="m-ts" style="font-weight:500;font-family:monospace;font-size:12px">—</span></div>
+    <div class="meta-row"><span style="color:#666">Device</span><span id="m-dev" style="font-weight:500;font-size:12px">—</span></div>
+    <div class="meta-row"><span style="color:#666">GPS</span><span id="m-gps" style="font-weight:500;font-size:12px;color:#999">Not captured</span></div>
+    <div class="meta-row"><span style="color:#666">Network at submit</span><span id="m-net" style="font-weight:500;font-size:12px">—</span></div>
+  </div>
+  <button style="font-size:12px;padding:6px 14px;border-radius:8px;border:0.5px solid #ccc;background:white;cursor:pointer;color:#666" id="gps-btn" onclick="captureGPS()">Capture GPS</button>
+  <div class="nav-row"><button class="btn-back" onclick="go(4)">Back</button><button class="btn-next" onclick="go(6)">Continue</button></div>
+</div>
+
+<!-- Step 6 -->
+<div class="section" id="s6">
+  <div class="step-title">Source of evidence</div>
+  <div class="radio-group" id="src-group">
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Self-reported by participant')"><div class="rdot"></div>Self-reported by participant</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Platform-generated')"><div class="rdot"></div>Platform-generated (WhatsApp, Jumia, etc.)</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Financial institution')"><div class="rdot"></div>Financial institution (SACCO / bank)</div>
+    <div class="radio-opt" onclick="selRadio('src-group',this,'Third-party verified')"><div class="rdot"></div>Third-party verified</div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(5)">Back</button><button class="btn-next" onclick="go(7)">Continue</button></div>
+</div>
+
+<!-- Step 7 -->
+<div class="section" id="s7">
+  <div class="step-title">DCC observation</div>
+  <div class="field"><label>Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..." onblur="onField('dcc-comment','DCC comment saved','dcc-comment')"></textarea></div>
+  <div class="field">
+    <label>Confidence level</label>
+    <div class="radio-group" id="conf-group">
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'High')"><div class="rdot"></div>High — strong, verifiable evidence</div>
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'Medium')"><div class="rdot"></div>Medium — plausible, some gaps</div>
+      <div class="radio-opt" onclick="selRadio('conf-group',this,'Low')"><div class="rdot"></div>Low — self-reported only</div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(6)">Back</button><button class="btn-next" onclick="go(8)">Continue</button></div>
+</div>
+
+<!-- Step 8 -->
+<div class="section" id="s8">
+  <div class="step-title">Verification</div>
+  <div class="field">
+    <label>Verification status</label>
+    <div class="radio-group" id="verif-group">
+      <div class="radio-opt sel" onclick="selRadio('verif-group',this,'Pending')"><div class="rdot on"></div>Pending review</div>
+      <div class="radio-opt" onclick="selRadio('verif-group',this,'Approved')"><div class="rdot"></div>Approved</div>
+      <div class="radio-opt" onclick="selRadio('verif-group',this,'Rejected')"><div class="rdot"></div>Rejected</div>
+    </div>
+  </div>
+  <div class="field"><label>Verification method</label><select id="verif-method" onchange="onField('verif-method','Verification method set','verif-method')"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select></div>
+  <div class="field-row">
+    <div class="field"><label>Verified by</label><input type="text" id="verif-name" placeholder="Name" onblur="onField('verif-name','Verifier set','verif-name')" /></div>
+    <div class="field"><label>Organization</label><input type="text" id="verif-org" placeholder="Org" onblur="onField('verif-org','Verifier org set','verif-org')" /></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="go(7)">Back</button><button class="btn-next" onclick="go(9)">Continue</button></div>
+</div>
+
+<!-- Step 9 -->
+<div class="section" id="s9">
+  <div class="step-title">Follow-up</div>
+  <div class="field">
+    <label>Flag for follow-up?</label>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="outcome-btn" id="fu-yes" onclick="setFU(true)">Yes</button>
+      <button class="outcome-btn" id="fu-no" onclick="setFU(false)">No</button>
+    </div>
+  </div>
+  <div id="fu-date-row" style="display:none" class="field"><label>Follow-up date</label><input type="date" id="fu-date" onchange="onField('fu-date','Follow-up date set','fu-date')" /></div>
+  <div class="nav-row"><button class="btn-back" onclick="go(8)">Back</button><button class="btn-next" onclick="go(10)">Review &amp; submit</button></div>
+</div>
+
+<!-- Step 10 -->
+<div class="section" id="s10">
+  <div class="step-title">Review &amp; submit</div>
+  <div id="review-cards"></div>
+  <hr class="section-divider" />
+  <div class="audit-panel-box">
+    <div class="audit-title">Audit trail — this session</div>
+    <div id="audit-log-final"></div>
+  </div>
+  <button class="submit-btn" onclick="submitForm()">Submit evidence record</button>
+  <div class="nav-row" style="margin-top:8px"><button class="btn-back" onclick="go(9)">Back</button></div>
+</div>
+
+<!-- Success -->
+<div class="section" id="s11">
+  <div class="success-wrap">
+    <div style="width:48px;height:48px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:20px;color:#085041">&#10003;</div>
+    <div style="font-size:17px;font-weight:500;margin-bottom:6px">Record submitted</div>
+    <div style="font-size:13px;color:#666;margin-bottom:1.5rem" id="submit-note">Saved and queued for back-office verification</div>
+    <div style="margin-bottom:1rem;text-align:left">
+      <div style="font-size:12px;color:#666;margin-bottom:8px">Reference IDs — copy and keep safe</div>
+      <div class="id-big"><span id="final-par">—</span><button class="copy-btn" onclick="copyId('final-par',this)">Copy</button></div>
+      <div class="id-big"><span id="final-evi">—</span><button class="copy-btn" onclick="copyId('final-evi',this)">Copy</button></div>
+      <div class="id-big"><span id="final-int">—</span><button class="copy-btn" onclick="copyId('final-int',this)">Copy</button></div>
+    </div>
+    <button class="submit-btn" onclick="resetAll()">Submit another record</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   CONFIG
+========================= */
+const CONFIG = {
+  SHEETS: {
+    PARTICIPANTS: {
+      id: '1x4-wPAHIli3QqL_K2Xc-ur3E2-ICtm7ynuc8uByoEOc',
+      tab: 'foundation'
+    }
+  },
+  API_KEY: 'AIzaSyB1-kXAJsy_C1JKhZ2R0tYeuZhGq6eCOr0'
+};
+
+/* =========================
+   STATE
+========================= */
+const state = {
+  index: [],
+  loaded: false,
+  selected: null,
+  verified: false,
+  errors: {
+    phone: '',
+    email: ''
+  }
+};
+
+const $ = id => document.getElementById(id);
+
+/* =========================
+   UTIL
+========================= */
+const norm = s =>
+  (s || '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ');
+
+function cleanHeader(h){
+  return (h||'')
+    .toLowerCase()
+    .trim()
+    .replace(/\n/g,' ');
+}
+
+/* =========================
+   ERROR UI HELPERS
+========================= */
+function setError(fieldId, msg){
+  const el = $(fieldId);
+  if (!el) return;
+
+  let err = el.parentNode.querySelector('.err-msg');
+
+  if (!err){
+    err = document.createElement('div');
+    err.className = 'err-msg';
+    err.style.fontSize = '11px';
+    err.style.color = '#E24B4A';
+    err.style.marginTop = '4px';
+    el.parentNode.appendChild(err);
+  }
+
+  err.innerText = msg || '';
+}
+
+function clearError(fieldId){
+  const el = $(fieldId);
+  if (!el) return;
+
+  const err = el.parentNode.querySelector('.err-msg');
+  if (err) err.innerText = '';
+}
+
+/* =========================
+   LOAD SHEET
+========================= */
+async function loadParticipants() {
+  const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/` +
+    `${CONFIG.SHEETS.PARTICIPANTS.id}/values/` +
+    `${encodeURIComponent(CONFIG.SHEETS.PARTICIPANTS.tab)}?key=${CONFIG.API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.error) {
+      console.error("Sheet error:", data.error);
+      alert("Failed to load participant database");
+      return;
+    }
+
+    const rows = data.values || [];
+    const headers = rows[0].map(cleanHeader);
+
+    const parsed = rows.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h,i)=> obj[h] = (r[i] || '').trim());
+      return obj;
+    });
+
+    state.index = parsed.map(p => ({
+      name: norm(`${p['first name'] || ''} ${p['surname'] || ''}`),
+      phone: (p['primary phone number'] || '').trim(),
+      email: (p['email'] || '').trim(),
+      raw: Object.freeze(p)
+    }));
+
+    state.loaded = true;
+    console.log("Audit DB loaded:", state.index.length);
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/* =========================
+   SEARCH
+========================= */
+function search(q){
+  q = norm(q);
+  if (!q) return [];
+
+  return state.index
+    .filter(p => p.name.includes(q))
+    .slice(0, 6);
+}
+
+/* =========================
+   DROPDOWN
+========================= */
+function showDropdown(items){
+  const box = $('par-dropdown');
+  if (!box) return;
+
+  if (!items.length){
+    box.style.display = 'none';
+    return;
+  }
+
+  box.innerHTML = items.map(i => `
+    <div style="padding:8px;cursor:pointer;border-bottom:1px solid #eee"
+      onclick="selectUser('${i.email}')">
+      <div style="font-weight:600">${i.raw['first name']} ${i.raw['surname']}</div>
+      <div style="font-size:11px;color:#666">${i.phone} • ${i.email}</div>
+    </div>
+  `).join('');
+
+  box.style.display = 'block';
+}
+
+/* =========================
+   SELECT USER (LOCKED)
+========================= */
+window.selectUser = function(email){
+
+  const u = state.index.find(x => x.email === email);
+  if (!u) return;
+
+  state.selected = Object.freeze({
+    name: u.name,
+    phone: u.phone,
+    email: u.email
+  });
+
+  $('p-name').value = u.name;
+  $('p-phone').value = u.phone;
+  $('p-email').value = u.email;
+
+  $('p-phone').readOnly = true;
+  $('p-email').readOnly = true;
+
+  $('p-phone-confirm').value = '';
+  $('p-email-confirm').value = '';
+
+  clearError('p-phone-confirm');
+  clearError('p-email-confirm');
+
+  state.verified = false;
+
+  $('par-dropdown').style.display = 'none';
+
+  validateMatch();
+};
+
+/* =========================
+   LIVE AUTOCOMPLETE
+========================= */
+let t;
+function onNameInput(e){
+  clearTimeout(t);
+  t = setTimeout(()=>{
+    showDropdown(search(e.target.value));
+  }, 120);
+}
+
+/* =========================
+   VALIDATION + ERROR MESSAGES (FIX)
+========================= */
+function validateMatch(){
+
+  if (!state.selected) return false;
+
+  const phone = $('p-phone').value;
+  const email = $('p-email').value;
+
+  const phoneConfirm = $('p-phone-confirm').value;
+  const emailConfirm = $('p-email-confirm').value;
+
+  const phoneMatch = norm(phone) === norm(state.selected.phone);
+  const emailMatch = norm(email) === norm(state.selected.email);
+
+  const phoneConfirmMatch = norm(phoneConfirm) === norm(state.selected.phone);
+  const emailConfirmMatch = norm(emailConfirm) === norm(state.selected.email);
+
+  // RESET ERRORS FIRST
+  clearError('p-phone-confirm');
+  clearError('p-email-confirm');
+
+  // FIELD LEVEL ERRORS (THIS IS WHAT WAS MISSING)
+  if (!phoneConfirmMatch && phoneConfirm.length > 0){
+    setError('p-phone-confirm',
+      "Phone does not match selected participant record"
+    );
+  }
+
+  if (!emailConfirmMatch && emailConfirm.length > 0){
+    setError('p-email-confirm',
+      "Email does not match selected participant record"
+    );
+  }
+
+  // SYSTEM MISMATCH ERROR (PRIMARY)
+  if (!phoneMatch || !emailMatch){
+    state.verified = false;
+    return false;
+  }
+
+  state.verified =
+    phoneConfirmMatch &&
+    emailConfirmMatch;
+
+  const btn = document.querySelector('.btn-next');
+
+  if (btn){
+    btn.disabled = !state.verified;
+    btn.style.opacity = state.verified ? "1" : "0.4";
+    btn.style.pointerEvents = state.verified ? "auto" : "none";
+  }
+
+  return state.verified;
+}
+
+/* =========================
+   LIVE VALIDATION
+========================= */
+['p-phone-confirm','p-email-confirm'].forEach(id=>{
+  const el = $(id);
+  if (el){
+    el.addEventListener('input', validateMatch);
+  }
+});
+
+/* =========================
+   STEP GATE
+========================= */
+window.go = function(step){
+
+  if (step === 2){
+
+    if (!state.selected){
+      alert("No participant selected from system.");
+      return;
+    }
+
+    if (!validateMatch()){
+      alert(
+        "Verification failed:\n" +
+        "- Check phone/email match system record\n" +
+        "- Ensure confirmation fields are correct"
+      );
+      return;
+    }
+  }
+
+  document.querySelectorAll('.section')
+    .forEach(s => s.classList.remove('active'));
+
+  const target = document.getElementById('s'+step);
+  if (target) target.classList.add('active');
+};
+
+/* =========================
+   INIT
+========================= */
+window.addEventListener('DOMContentLoaded', async ()=>{
+  await loadParticipants();
+  $('p-name')?.addEventListener('input', onNameInput);
+});
+</script>
+</body>
+</html>

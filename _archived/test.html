@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Google Sheets Test v3</title>
+
+  <style>
+    body {
+      font-family: system-ui;
+      padding: 20px;
+      background: #f6f6f6;
+    }
+
+    button {
+      padding: 10px 14px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 12px;
+    }
+
+    th {
+      background: #111;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    .ok {
+      color: green;
+      font-weight: 600;
+    }
+
+    .err {
+      color: red;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Google Sheets Test (Top 100 Rows)</h2>
+
+  <button onclick="loadSheet()">Load Data</button>
+
+  <p id="status">Idle</p>
+
+  <div id="table"></div>
+
+  <script>
+
+    // =====================
+    // CONFIG
+    // =====================
+    const SHEET_ID = "1x4-wPAHIli3QqL_K2Xc-ur3E2-ICtm7ynuc8uByoEOc";
+    const TAB_NAME = "foundation";
+
+
+    const API_KEY = "AIzaSyB1-kXAJsy_C1JKhZ2R0tYeuZhGq6eCOr0";
+
+    // =====================
+    // LOAD SHEET (SAFE)
+    // =====================
+    async function loadSheet() {
+
+      const status = document.getElementById("status");
+      const table = document.getElementById("table");
+
+      status.innerHTML = "Loading top 100 rows...";
+      table.innerHTML = "";
+
+      const range = `${TAB_NAME}!A1:Z1001`;
+
+      const url =
+        `https://sheets.googleapis.com/v4/spreadsheets/` +
+        `${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        console.log("RAW:", data);
+
+
+        if (!res.ok || data.error) {
+          status.innerHTML = `<span class="err">ERROR: ${data.error?.message || res.status}</span>`;
+          return;
+        }
+
+        if (!data.values || data.values.length === 0) {
+          status.innerHTML = "<span class='err'>No data found</span>";
+          return;
+        }
+
+        const headers = data.values[0];
+        const rows = data.values.slice(1);
+
+        status.innerHTML = `<span class="ok">Loaded ${rows.length} rows</span>`;
+
+        // BUILD TABLE
+        let html = "<table><thead><tr>";
+
+        headers.forEach(h => {
+          html += `<th>${h}</th>`;
+        });
+
+        html += "</tr></thead><tbody>";
+
+        rows.forEach(r => {
+          html += "<tr>";
+          headers.forEach((_, i) => {
+            html += `<td>${r[i] || ""}</td>`;
+          });
+          html += "</tr>";
+        });
+
+        html += "</tbody></table>";
+
+        table.innerHTML = html;
+
+      } catch (err) {
+        status.innerHTML = `<span class="err">Network Error: ${err.message}</span>`;
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>
