@@ -1,2 +1,578 @@
 // Copied from project root for Vercel static hosting
 // ...existing code from dcc_agents.json...
+[
+  {
+    "id": 1,
+    "name": "Serena Brendah",
+    "phone": "256757053417",
+    "district": "Isingiro",
+    "location": "Kajaho"
+  },
+  {
+    "id": 2,
+    "name": "Ndyamuhaki Patience",
+    "phone": "256702503958",
+    "district": "Isingiro",
+    "location": "Isingiro Town Council"
+  },
+  {
+    "id": 3,
+    "name": "Nakisanda Janat",
+    "phone": "256759101482",
+    "district": "Isingiro",
+    "location": "Rugaaga Town council"
+  },
+  {
+    "id": 4,
+    "name": "Nabasumba Zakia",
+    "phone": "256743798950",
+    "district": "Isingiro",
+    "location": "Rugaaga Town council"
+  },
+  {
+    "id": 5,
+    "name": "Namata Sophie",
+    "phone": "256761954636",
+    "district": "Isingiro",
+    "location": "Isingiro Town Council"
+  },
+  {
+    "id": 6,
+    "name": "Kyomugasho Rosemary",
+    "phone": "256782498325",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 7,
+    "name": "Nuwamara Noredah",
+    "phone": "256769412896",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 8,
+    "name": "Kihembo Judith",
+    "phone": "256740900417",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 9,
+    "name": "Kwihiriza Patience",
+    "phone": "256789369038",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 10,
+    "name": "Tushabomwe Shillah",
+    "phone": "256777355756",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 11,
+    "name": "Izimukwiye Izabella",
+    "phone": "256767196789",
+    "district": "Isingiro",
+    "location": "Base Camp"
+  },
+  {
+    "id": 12,
+    "name": "Patience Zadiya",
+    "phone": "256763857467",
+    "district": "Isingiro",
+    "location": "Base Camp"
+  },
+  {
+    "id": 13,
+    "name": "Alice Munyerenkana",
+    "phone": "256761453285",
+    "district": "Isingiro",
+    "location": "Koshowab"
+  },
+  {
+    "id": 14,
+    "name": "Nahwera Fortunate",
+    "phone": "256791175255",
+    "district": "Isingiro",
+    "location": ""
+  },
+  {
+    "id": 15,
+    "name": "Nasanga Brenda",
+    "phone": "256748412287",
+    "district": "Isingiro",
+    "location": "Rugaaga Town council"
+  },
+  {
+    "id": 16,
+    "name": "Nankunda Charity",
+    "phone": "256754738602",
+    "district": "Isingiro",
+    "location": "Isingiro Town Council"
+  },
+  {
+    "id": 17,
+    "name": "Ahikiriza Racheal",
+    "phone": "256765907872",
+    "district": "Isingiro",
+    "location": "Kityaza"
+  },
+  {
+    "id": 18,
+    "name": "Tumusiime Benadine",
+    "phone": "256781611760",
+    "district": "Isingiro",
+    "location": ""
+  },
+  {
+    "id": 19,
+    "name": "Apiyo Prisca",
+    "phone": "256787064720",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 20,
+    "name": "Auma Winnie",
+    "phone": "256767424826",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 21,
+    "name": "Akello Ketty",
+    "phone": "256764277298",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 22,
+    "name": "Lawino Oliver",
+    "phone": "256770350033",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 23,
+    "name": "Aloyo Pamela",
+    "phone": "256783353269",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 24,
+    "name": "Acayo Gladys",
+    "phone": "256787873123",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 25,
+    "name": "Abalo Cynthia",
+    "phone": "256789572295",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 26,
+    "name": "Jocyce Aloyo",
+    "phone": "256783202772",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 27,
+    "name": "Lilly Akiyo",
+    "phone": "256774642512",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 28,
+    "name": "Janneth Auma",
+    "phone": "256774150018",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 29,
+    "name": "Acayo Kevin Okeny",
+    "phone": "256766642447",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 30,
+    "name": "Apiyo Miriam",
+    "phone": "256782246138",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 31,
+    "name": "Lakot Jackline",
+    "phone": "256780213085",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 32,
+    "name": "Lamaro Joyce",
+    "phone": "256761394308",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 33,
+    "name": "Oyella Eveline Saverio",
+    "phone": "256773147400",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 34,
+    "name": "Lanyero Patricia Angeyo",
+    "phone": "25684160356",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 35,
+    "name": "Aol Eunice",
+    "phone": "256764567829",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 36,
+    "name": "Aciro Prisca",
+    "phone": "256761806946",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 37,
+    "name": "Aol Immaculate",
+    "phone": "256778428653",
+    "district": "Gulu",
+    "location": ""
+  },
+  {
+    "id": 38,
+    "name": "Simuli Amina",
+    "phone": "256783544785",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 39,
+    "name": "Nagudi Sharon",
+    "phone": "256788008873",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 40,
+    "name": "Nandudu Phiona",
+    "phone": "256701144955",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 41,
+    "name": "Nalweyiso Peace",
+    "phone": "256760877303",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 42,
+    "name": "Mali Kerine",
+    "phone": "256777381936",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 43,
+    "name": "Nasike Annet",
+    "phone": "256774653987",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 44,
+    "name": "Nyawere Sarah",
+    "phone": "256750826527",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 45,
+    "name": "Neumbe Gift",
+    "phone": "256756191264",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 46,
+    "name": "Mutuwa Stellah",
+    "phone": "256791761333",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 47,
+    "name": "Mutama Racheal",
+    "phone": "256785277692",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 48,
+    "name": "Namara Hildah",
+    "phone": "256773321213",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 49,
+    "name": "Ajambo Rose",
+    "phone": "256779000952",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 50,
+    "name": "Birungi Teopista",
+    "phone": "256755306339",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 51,
+    "name": "Nabukoko Hellen",
+    "phone": "256771360249",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 52,
+    "name": "Mukisa Hellen",
+    "phone": "256786648887",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 53,
+    "name": "Namono Esther",
+    "phone": "256704959756",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 54,
+    "name": "Nambozo Angella",
+    "phone": "256777244250",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 55,
+    "name": "Mukoya Prisca",
+    "phone": "256744729444",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 56,
+    "name": "Masibo Philomena",
+    "phone": "256792709353",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 57,
+    "name": "Kharono Betty",
+    "phone": "256787502612",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 58,
+    "name": "Kaudha Sarah",
+    "phone": "256750141448",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 59,
+    "name": "Kakai Medda",
+    "phone": "256775689302",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 60,
+    "name": "Namujeke Shakirah",
+    "phone": "256754267921",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 61,
+    "name": "Gimbo Jamilah",
+    "phone": "256745153273",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 62,
+    "name": "Naigaga Suliana",
+    "phone": "256702306600",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 63,
+    "name": "Nalwoha Kamuyati",
+    "phone": "256730592977",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 64,
+    "name": "Sumba Joan",
+    "phone": "256752034541",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 65,
+    "name": "Namukoma Shamimu",
+    "phone": "256764950518",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 66,
+    "name": "Zemei Peace",
+    "phone": "256788526806",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 67,
+    "name": "Ayo Winfred",
+    "phone": "256779713162",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 68,
+    "name": "Chellengat Sisco",
+    "phone": "256780678794",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 69,
+    "name": "Chellengat Vallery",
+    "phone": "256784142130",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 70,
+    "name": "Ateino Peninah",
+    "phone": "256751811587",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 71,
+    "name": "Ayano Rose",
+    "phone": "256759664806",
+    "district": "Eastern",
+    "location": ""
+  },
+  {
+    "id": 72,
+    "name": "Moreen Kyarimpa",
+    "phone": "256745720274",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 73,
+    "name": "Sylivia Awor",
+    "phone": "256761687856",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 74,
+    "name": "Mary Felister Adikin",
+    "phone": "256789417140",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 75,
+    "name": "Patricia Namata",
+    "phone": "256743019546",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 76,
+    "name": "Nabuuma Miriam",
+    "phone": "256730802901",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 77,
+    "name": "Kampi Shamira",
+    "phone": "256789045449",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 78,
+    "name": "Esther Bagalika",
+    "phone": "256774004405",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 79,
+    "name": "Abiko Alice",
+    "phone": "256770483972",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 80,
+    "name": "Shegisa Sarah Mercy",
+    "phone": "256754109490",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 81,
+    "name": "Twinobusingye Shamorin Sheebah",
+    "phone": "256777080181",
+    "district": "Central",
+    "location": ""
+  },
+  {
+    "id": 82,
+    "name": "Nakanwagi Christine",
+    "phone": "256705479158",
+    "district": "Central",
+    "location": ""
+  }
+]
