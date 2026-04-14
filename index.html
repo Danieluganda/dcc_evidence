@@ -848,31 +848,119 @@ window.addEventListener('DOMContentLoaded', async ()=>{
 });
 
 /* =========================
-   KOBO SUBMISSION
+   KOBO SUBMISSION (direct browser → KoboToolbox)
 ========================= */
 async function submitToKobo(data, files) {
-  // Use FormData to send both JSON data and files
-  const url = `http://localhost:3000/submit-to-kobo`;
+  const KOBO_FORM_ID = 'aNZHBjwUHgTJUUSbZuEhFd';
+  const KOBO_TOKEN   = '070760df54724dec37f37cef0c2f572e184af535';
+  const KOBO_URL     = 'https://kc.kobotoolbox.org/submission';
+
+  const MAP = {
+    outcomes: {
+      'Got a job': 'job', 'Started a business': 'business',
+      'Made a sale': 'sale', 'Increased income': 'income',
+      'Accessed digital credit': 'credit'
+    },
+    evidence_type: { 'Photo': 'photo', 'Screenshot': 'screenshot' },
+    source: {
+      'Self-reported by participant': 'self',
+      'Platform-generated (WhatsApp, Jumia, etc.)': 'platform',
+      'Field officer': 'field',
+      'Financial institution (SACCO / bank)': 'financial'
+    },
+    verification_status: {
+      'Pending review': 'pending', 'Pending': 'pending',
+      'Verified': 'verified', 'Rejected': 'rejected'
+    },
+    verification_method: {
+      'Field visit': 'field_visit', 'Phone call': 'call',
+      'Call confirmation': 'call', 'System verification': 'system'
+    },
+    confidence: {
+      'High — strong, verifiable evidence': 'high',
+      'Medium — plausible, some gaps': 'medium',
+      'Low — weak evidence': 'low'
+    },
+    followup: { 'Yes': 'yes', 'No': 'no' }
+  };
+
+  const escapeXml = (unsafe = '') =>
+    String(unsafe)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+  const instanceID = `uuid:${crypto.randomUUID()}`;
+
+  // GPS fix
+  let gps = data.gps || '';
+  if (gps.includes(',')) gps = gps.replace(',', ' ') + ' 0 0';
+
+  // Multi-select outcomes
+  let outcomesValue = data.outcomes;
+  if (Array.isArray(outcomesValue)) {
+    outcomesValue = outcomesValue.map(o => MAP.outcomes[o]).filter(Boolean).join(' ');
+  } else {
+    outcomesValue = MAP.outcomes[outcomesValue] || '';
+  }
+
+  const file = files && files.length ? files[0] : null;
+
+  const fields = {
+    evidence_id:         data.evidence_id,
+    participant_id:      data.participant_id,
+    intervention_id:     data.intervention_id,
+    dcc_name:            data.dcc_name || data.dcc_agent,
+    participant_name:    data.participant_name,
+    phone:               data.phone,
+    email:               data.email,
+    outcomes:            outcomesValue,
+    outcome_date:        data.outcome_date,
+    description:         data.outcome_desc || data.description,
+    income_before:       data.income_before || '0',
+    income_after:        data.income_after  || '0',
+    files:               file ? file.name : undefined,
+    evidence_type:       MAP.evidence_type[data.evidence_type],
+    evidence_desc:       data.evidence_desc,
+    source:              MAP.source[data.source],
+    confidence:          MAP.confidence[data.confidence] || 'medium',
+    verification_status: MAP.verification_status[data.verification_status],
+    verification_method: MAP.verification_method[data.verification_method],
+    verified_by:         data.verified_by,
+    verification_org:    data.verified_org,
+    gps:                 gps,
+    followup:            MAP.followup[data.follow_up] || 'no',
+    network:             data.network
+  };
+
+  let xmlFields = '';
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined && value !== null && value !== '') {
+      xmlFields += `  <${key}>${escapeXml(value)}</${key}>\n`;
+    }
+  }
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<${KOBO_FORM_ID} id="${KOBO_FORM_ID}">
+${xmlFields}  <meta><instanceID>${instanceID}</instanceID></meta>
+</${KOBO_FORM_ID}>`;
+
   const formData = new FormData();
-  formData.append('data', JSON.stringify(data));
-  if (files && files.length) {
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
+  formData.append('xml_submission_file', new Blob([xml], { type: 'text/xml' }), 'submission.xml');
+  if (file) formData.append('files', file, file.name);
+
+  const res = await fetch(KOBO_URL, {
+    method: 'POST',
+    headers: { Authorization: `Token ${KOBO_TOKEN}` },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => res.statusText);
+    throw new Error(`KoboToolbox submission failed (${res.status}): ${detail}`);
   }
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: formData
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({detail:res.statusText}));
-      throw new Error(err.error || err.detail || 'Unknown error. Make sure server.js is running!');
-    }
-    return await res.json();
-  } catch (e) {
-    throw e;
-  }
+
+  return { success: true, instanceID, message: 'Submitted successfully' };
 }
 
 /* =========================
