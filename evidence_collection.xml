@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" xmlns:odk="http://www.opendatakit.org/xforms">
+  <h:head>
+    <h:title>Evidence Tracking Form</h:title>
+    <model odk:xforms-version="1.0.0">
+      <instance>
+        <aNZHBjwUHgTJUUSbZuEhFd id="evidence_tracking">
+          <evidence_id/>
+          <participant_id/>
+          <intervention_id/>
+          <role/>
+          <eso_rep_name/>
+          <eso_rep_position/>
+          <dcc_name/>
+          <participant_name/>
+          <phone/>
+          <business_name/>
+          <email/>
+          <national_id/>
+          <outcomes/>
+          <outcome_date/>
+          <description/>
+          <income_before/>
+          <income_after/>
+          <files/>
+          <evidence_type/>
+          <evidence_desc/>
+          <source/>
+          <confidence/>
+          <verification_status/>
+          <verification_method/>
+          <verified_by/>
+          <verification_org/>
+          <gps/>
+          <followup/>
+          <timestamp/>
+          <audit_entries/>
+          <network/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </aNZHBjwUHgTJUUSbZuEhFd>
+      </instance>
+      <instance id="outcomes_list">
+        <root>
+          <item>
+            <name>job</name>
+            <label>Got a job</label>
+          </item>
+          <item>
+            <name>business</name>
+            <label>Started a business</label>
+          </item>
+          <item>
+            <name>sale</name>
+            <label>Made a sale</label>
+          </item>
+          <item>
+            <name>income</name>
+            <label>Increased income</label>
+          </item>
+          <item>
+            <name>credit</name>
+            <label>Accessed digital credit</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="evidence_type_list">
+        <root>
+          <item>
+            <name>screenshot</name>
+            <label>Screenshot</label>
+          </item>
+          <item>
+            <name>photo</name>
+            <label>Photo</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="source_list">
+        <root>
+          <item>
+            <name>self</name>
+            <label>Self-reported by participant</label>
+          </item>
+          <item>
+            <name>platform</name>
+            <label>Platform-generated</label>
+          </item>
+          <item>
+            <name>field</name>
+            <label>Field officer</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="verification_status_list">
+        <root>
+          <item>
+            <name>pending</name>
+            <label>Pending</label>
+          </item>
+          <item>
+            <name>verified</name>
+            <label>Verified</label>
+          </item>
+          <item>
+            <name>rejected</name>
+            <label>Rejected</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="verification_method_list">
+        <root>
+          <item>
+            <name>field_visit</name>
+            <label>Field visit</label>
+          </item>
+          <item>
+            <name>call</name>
+            <label>Phone call</label>
+          </item>
+          <item>
+            <name>system</name>
+            <label>System verification</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="yes_no">
+        <root>
+          <item>
+            <name>yes</name>
+            <label>Yes</label>
+          </item>
+          <item>
+            <name>no</name>
+            <label>No</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="network_list">
+        <root>
+          <item>
+            <name>online</name>
+            <label>Online</label>
+          </item>
+          <item>
+            <name>offline</name>
+            <label>Offline</label>
+          </item>
+        </root>
+      </instance>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/evidence_id" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/participant_id" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/intervention_id" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/role" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/eso_rep_name" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/eso_rep_position" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/dcc_name" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/participant_name" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/phone" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/business_name" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/email" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/national_id" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/outcomes" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/outcome_date" type="date"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/description" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/income_before" type="decimal"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/income_after" type="decimal"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/files" type="binary"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/evidence_type" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/evidence_desc" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/source" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/confidence" type="int"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/verification_status" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/verification_method" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/verified_by" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/verification_org" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/gps" type="geopoint"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/followup" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/timestamp" type="dateTime"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/audit_entries" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/network" type="string"/>
+      <bind nodeset="/aNZHBjwUHgTJUUSbZuEhFd/meta/instanceID" type="string" readonly="true()" jr:preload="uid"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/evidence_id">
+      <label>Evidence ID</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/participant_id">
+      <label>Participant ID</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/intervention_id">
+      <label>Intervention ID</label>
+    </input>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/role">
+      <label>Role</label>
+      <item>
+        <label>ESO</label>
+        <value>ESO</value>
+      </item>
+      <item>
+        <label>DCC</label>
+        <value>DCC</value>
+      </item>
+    </select1>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/eso_rep_name">
+      <label>ESO Representative Name</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/eso_rep_position">
+      <label>ESO Representative Position</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/dcc_name">
+      <label>DCC Name</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/participant_name">
+      <label>Participant Name</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/phone">
+      <label>Phone Number</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/business_name">
+      <label>Business Name</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/email">
+      <label>Email Address</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/national_id">
+      <label>National ID</label>
+    </input>
+    <select ref="/aNZHBjwUHgTJUUSbZuEhFd/outcomes">
+      <label>Outcomes Achieved</label>
+      <itemset nodeset="instance('outcomes_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/outcome_date">
+      <label>Outcome Date</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/description">
+      <label>Description</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/income_before">
+      <label>Income Before</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/income_after">
+      <label>Income After</label>
+    </input>
+    <upload mediatype="image/*" ref="/aNZHBjwUHgTJUUSbZuEhFd/files">
+      <label>Upload Evidence (Image)</label>
+    </upload>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/evidence_type">
+      <label>Evidence Type</label>
+      <itemset nodeset="instance('evidence_type_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/evidence_desc">
+      <label>Evidence Description</label>
+    </input>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/source">
+      <label>Source</label>
+      <itemset nodeset="instance('source_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/confidence">
+      <label>Confidence Level (%)</label>
+    </input>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/verification_status">
+      <label>Verification Status</label>
+      <itemset nodeset="instance('verification_status_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/verification_method">
+      <label>Verification Method</label>
+      <itemset nodeset="instance('verification_method_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/verified_by">
+      <label>Verified By</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/verification_org">
+      <label>Verification Organization</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/gps">
+      <label>GPS Location</label>
+    </input>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/followup">
+      <label>Follow-up Needed</label>
+      <itemset nodeset="instance('yes_no')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/timestamp">
+      <label>Timestamp</label>
+    </input>
+    <input ref="/aNZHBjwUHgTJUUSbZuEhFd/audit_entries">
+      <label>Audit Entries</label>
+    </input>
+    <select1 ref="/aNZHBjwUHgTJUUSbZuEhFd/network">
+      <label>Network Status</label>
+      <itemset nodeset="instance('network_list')/root/item">
+        <value ref="name"/>
+        <label ref="label"/>
+      </itemset>
+    </select1>
+  </h:body>
+</h:html>

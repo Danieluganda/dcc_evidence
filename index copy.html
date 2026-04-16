@@ -189,17 +189,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 @media(max-width:480px){.ids-panel{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 <div class="wrap">
-<!-- Role Selection Modal -->
-<div id="role-modal" style="position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(245,245,243,0.98);display:flex;align-items:center;justify-content:center;">
-  <div style="background:white;padding:2rem 2.5rem;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);max-width:340px;width:100%;text-align:center">
-    <div style="font-size:20px;font-weight:600;margin-bottom:1.5rem">Select your role</div>
-    <button onclick="selectRole('ESO')" style="width:100%;padding:14px 0;margin-bottom:1rem;font-size:16px;border-radius:8px;border:none;background:#1D9E75;color:white;font-weight:500;cursor:pointer">ESO (Extension Service Officer)</button>
-    <button onclick="selectRole('DCC')" style="width:100%;padding:14px 0;font-size:16px;border-radius:8px;border:none;background:#085041;color:white;font-weight:500;cursor:pointer">DCC (Data Collection/Coordination)</button>
-  </div>
-</div>
 
 <div class="offline-banner" id="offline-banner">You are offline. Records will be saved locally and synced when you reconnect.</div>
 
@@ -235,31 +226,15 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 
 <!-- Step 1 -->
 <div class="section active" id="s1">
-  <div class="step-title" id="step1-title">Participant details</div>
+  <div class="step-title">Participant details</div>
 
-  <div class="field" id="dcc-agent-field">
-    <label id="dcc-agent-label">DCC agent name <span>*</span></label>
+  <div class="field">
+    <label>DCC agent name <span>*</span></label>
     <div style="position:relative">
       <input type="text" id="p-dcc" placeholder="Type to search agents..." autocomplete="off" oninput="searchDCCAgent()" onblur="setTimeout(hideDCCDropdown,200)" />
       <div id="dcc-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ccc;border-radius:8px;z-index:10;max-height:200px;overflow-y:auto;margin-top:2px;box-shadow:0 4px 12px rgba(0,0,0,0.08)"></div>
     </div>
     <div id="dcc-status" style="font-size:11px;margin-top:4px;display:none"></div>
-  </div>
-  <!-- ESO Representative fields (hidden by default, shown for ESO) -->
-  <div class="field" id="eso-rep-name-field" style="display:none">
-    <label>ESO Representative Name <span>*</span></label>
-    <input type="text" id="eso-rep-name" placeholder="Enter representative's name" />
-  </div>
-  <div class="field" id="eso-rep-pos-field" style="display:none">
-    <label>Position <span>*</span></label>
-    <input type="text" id="eso-rep-pos" placeholder="Enter position" />
-  </div>
-
-  <!-- ESO Contact Display (hidden by default) -->
-  <div id="eso-contact" style="display:none;margin-bottom:1rem;padding:10px 12px;background:#E1F5EE;border-radius:8px;font-size:13px">
-    <div id="eso-name" style="font-weight:600"></div>
-    <div id="eso-phone"></div>
-    <div id="eso-email"></div>
   </div>
 
   <div class="field" style="position:relative">
@@ -344,15 +319,14 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
     <div class="radio-opt" onclick="selRadio('src-group',this,'Platform-generated')"><div class="rdot"></div>Platform-generated (WhatsApp, Jumia, etc.)</div>
     <div class="radio-opt" onclick="selRadio('src-group',this,'Financial institution')"><div class="rdot"></div>Financial institution (SACCO / bank)</div>
     <div class="radio-opt" onclick="selRadio('src-group',this,'Third-party verified')"><div class="rdot"></div>Third-party verified</div>
-    <div class="radio-opt" onclick="selRadio('src-group',this,'Others')"><div class="rdot"></div>Others</div>
   </div>
   <div class="nav-row"><button class="btn-back" onclick="go(5)">Back</button><button class="btn-next" onclick="go(7)">Continue</button></div>
 </div>
 
 <!-- Step 7 -->
 <div class="section" id="s7">
-  <div class="step-title" id="obs-title">Observations</div>
-  <div class="field"><label id="obs-label">Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..." onblur="onField('dcc-comment','Observation saved','dcc-comment')"></textarea></div>
+  <div class="step-title">Any observation</div>
+  <div class="field"><label>Your comments</label><textarea id="dcc-comment" placeholder="What did you observe? Any context that qualifies the evidence..." onblur="onField('dcc-comment','DCC comment saved','dcc-comment')"></textarea></div>
   <div class="field">
     <label>Confidence level</label>
     <div class="radio-group" id="conf-group">
@@ -364,21 +338,21 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
   <div class="nav-row"><button class="btn-back" onclick="go(6)">Back</button><button class="btn-next" onclick="go(8)">Continue</button></div>
 </div>
 
-<!-- Step 8 -->
+<!-- Step 8 -- >
 <div class="section" id="s8">
-  <div class="step-title" id="verif-title">Review</div>
+  <div class="step-title">Verification</div>
   <div class="field">
-    <label id="verif-status-label">Review status</label>
+    <label>Verification status</label>
     <div class="radio-group" id="verif-group">
       <div class="radio-opt sel" onclick="selRadio('verif-group',this,'Pending')"><div class="rdot on"></div>Pending review</div>
       <div class="radio-opt" onclick="selRadio('verif-group',this,'Approved')"><div class="rdot"></div>Approved</div>
       <div class="radio-opt" onclick="selRadio('verif-group',this,'Rejected')"><div class="rdot"></div>Rejected</div>
     </div>
   </div>
-  <div class="field"><label id="verif-method-label">Review method</label><select id="verif-method" onchange="onField('verif-method','Review method set','verif-method')"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select></div>
+  <div class="field"><label>Verification method</label><select id="verif-method" onchange="onField('verif-method','Verification method set','verif-method')"><option value="">Select...</option><option>Call confirmation</option><option>Document review</option><option>Partner confirmation (SACCO / bank)</option><option>Field visit</option></select></div>
   <div class="field-row">
-    <div class="field"><label id="verif-name-label">Reviewed by</label><input type="text" id="verif-name" placeholder="Name" onblur="onField('verif-name','Reviewer set','verif-name')" /></div>
-    <div class="field"><label id="verif-org-label">Organization</label><input type="text" id="verif-org" placeholder="Org" onblur="onField('verif-org','Reviewer org set','verif-org')" /></div>
+    <div class="field"><label>Verified by</label><input type="text" id="verif-name" placeholder="Name" onblur="onField('verif-name','Verifier set','verif-name')" /></div>
+    <div class="field"><label>Organization</label><input type="text" id="verif-org" placeholder="Org" onblur="onField('verif-org','Verifier org set','verif-org')" /></div>
   </div>
   <div class="nav-row"><button class="btn-back" onclick="go(7)">Back</button><button class="btn-next" onclick="go(9)">Continue</button></div>
 </div>
@@ -429,99 +403,6 @@ body{font-family:system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#f
 </div>
 
 <script>
-
-// ========== ROLE SELECTION & UI ADAPTATION ==========
-let selectedRole = null;
-const ESO_LIST = [
-  "Excel Hort",
-  "MUBS EIIC",
-  "PEDN",
-  "DFCU foundation Ltd",
-  "Finding XY",
-  "Mkazipreneur",
-  "Challenges Uganda",
-  "Stanbic Bank Incubator",
-  "AGDI",
-  "AID",
-  "CURAD",
-  "Living Earth Uganda",
-  "Others"
-];
-
-function selectRole(role) {
-  selectedRole = role;
-  document.getElementById('role-modal').style.display = 'none';
-  adaptUIForRole();
-}
-
-function adaptUIForRole() {
-  const dccAgentField = document.getElementById('dcc-agent-field');
-  const dccAgentLabel = document.getElementById('dcc-agent-label');
-  const dccInput = document.getElementById('p-dcc');
-  // Remove any previous ESO select if present
-  const prevEsoSelect = document.getElementById('eso-select');
-  if (prevEsoSelect) prevEsoSelect.remove();
-  dccInput.style.display = '';
-  if (selectedRole === 'ESO') {
-    dccAgentLabel.innerText = 'ESO name *';
-    // Replace input with select for ESO list
-    dccInput.style.display = 'none';
-    const esoSelect = document.createElement('select');
-    esoSelect.id = 'eso-select';
-    esoSelect.style.width = '100%';
-    esoSelect.style.fontSize = '14px';
-    esoSelect.style.padding = '8px 10px';
-    esoSelect.style.borderRadius = '8px';
-    esoSelect.style.border = '0.5px solid #ccc';
-    esoSelect.innerHTML = '<option value="">Select ESO...</option>' + ESO_LIST.map(e => `<option value="${e}">${e}</option>`).join('');
-    dccInput.parentNode.insertBefore(esoSelect, dccInput);
-    esoSelect.addEventListener('change', function() {
-      // Set value for downstream logic
-      dccInput.value = this.value;
-    });
-    // Show ESO rep fields
-    document.getElementById('eso-rep-name-field').style.display = '';
-    document.getElementById('eso-rep-pos-field').style.display = '';
-  } else {
-    dccAgentLabel.innerText = 'DCC agent name *';
-    dccInput.style.display = '';
-    // Hide ESO rep fields
-    document.getElementById('eso-rep-name-field').style.display = 'none';
-    document.getElementById('eso-rep-pos-field').style.display = 'none';
-  }
-  dccAgentField.style.display = 'block';
-  // Step 7 label always 'Observations'
-  document.getElementById('obs-title').innerText = 'Observations';
-  document.getElementById('obs-label').innerText = 'Your comments';
-  // Step 8: Verification → Review
-  document.getElementById('verif-title').innerText = 'Review';
-  document.getElementById('verif-status-label').innerText = 'Review status';
-  document.getElementById('verif-method-label').innerText = 'Review method';
-  document.getElementById('verif-name-label').innerText = 'Reviewed by';
-  document.getElementById('verif-org-label').innerText = 'Organization';
-}
-
-// ========== PARTICIPANT SELECTION: SHOW ESO CONTACT ==========
-// Hook into selectUser to show ESO contact info
-const origSelectUser = window.selectUser;
-window.selectUser = function(email) {
-  origSelectUser(email);
-  // Show ESO contact info at top
-  const name = document.getElementById('p-dcc').value;
-  const phone = document.getElementById('p-phone').value;
-  const emailVal = document.getElementById('p-email').value;
-  const esoContact = document.getElementById('eso-contact');
-  if (name && phone && emailVal) {
-    esoContact.style.display = 'block';
-    document.getElementById('eso-name').innerText = name;
-    document.getElementById('eso-phone').innerText = 'Phone: ' + phone;
-    document.getElementById('eso-email').innerText = 'Email: ' + emailVal;
-  } else {
-    esoContact.style.display = 'none';
-  }
-};
-
-
 /* =========================
    CONFIG
 ========================= */
@@ -910,11 +791,14 @@ function validateMatch(){
    STEP GATE
 ========================= */
 window.go = function(step){
+
   if (step === 2){
+
     if (!state.selected){
       alert("No participant selected from system.");
       return;
     }
+
     if (!validateMatch()){
       alert(
         "Verification failed:\n" +
@@ -924,19 +808,12 @@ window.go = function(step){
       return;
     }
   }
+
   document.querySelectorAll('.section')
     .forEach(s => s.classList.remove('active'));
+
   const target = document.getElementById('s'+step);
   if (target) target.classList.add('active');
-  // Update step tracker and progress bar
-  const stepLbl = document.getElementById('step-lbl');
-  if (stepLbl) {
-    stepLbl.innerText = 'Step ' + step + ' of 10';
-    const pbar = document.getElementById('pbar');
-    if (pbar) {
-      pbar.style.width = (step * 10) + '%';
-    }
-  }
 };
 
 /* =========================
